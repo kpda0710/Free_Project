@@ -1,7 +1,7 @@
 package com.project.free.service;
 
-import com.project.free.dto.UserRequest;
-import com.project.free.dto.UserResponse;
+import com.project.free.dto.user.UserRequest;
+import com.project.free.dto.user.UserResponse;
 import com.project.free.entity.UserEntity;
 import com.project.free.entity.UserStatus;
 import com.project.free.repository.UserEntityRepository;

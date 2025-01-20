@@ -1,4 +1,4 @@
-package com.project.free.dto;
+package com.project.free.dto.user;
 
 import com.project.free.entity.UserStatus;
 import lombok.*;
