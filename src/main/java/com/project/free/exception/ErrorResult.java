@@ -9,6 +9,7 @@ public enum ErrorResult {
 
     SUCCESS("1000", "SUCCESS"),
     USER_NOT_FOUND("4001", "USER NOT FOUND"),
+    BOARD_NOT_FOUND("4002", "BOARD NOT FOUND"),
     SYSTEM_ERROR("9000", "SYSTEM ERROR"),
     ;
 
