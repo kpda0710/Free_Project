@@ -6,7 +6,7 @@ import com.project.free.entity.UserEntity;
 import com.project.free.entity.UserStatus;
 import com.project.free.exception.BaseException;
 import com.project.free.exception.ErrorResult;
-import com.project.free.repository.UserRepository;
+import com.project.free.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final UserEntityRepository userEntityRepository;
 
     public UserResponse createUser(UserRequest request) {
         UserEntity userEntity = UserEntity.builder()
@@ -28,7 +28,7 @@ public class UserService {
                 .status(UserStatus.USER)
                 .build();
 
-        UserEntity saved = userRepository.save(userEntity);
+        UserEntity saved = userEntityRepository.save(userEntity);
 
         return UserResponse.builder()
                 .userId(saved.getUserId())
@@ -62,7 +62,7 @@ public class UserService {
         userEntity.setPassword(request.getPassword());
         userEntity.setEmail(request.getEmail());
 
-        UserEntity saved = userRepository.save(userEntity);
+        UserEntity saved = userEntityRepository.save(userEntity);
 
         return UserResponse.builder()
                 .userId(saved.getUserId())
@@ -80,10 +80,10 @@ public class UserService {
 
         userEntity.setIsDeleted(true);
         userEntity.setDeletedAt(LocalDateTime.now());
-        userRepository.save(userEntity);
+        userEntityRepository.save(userEntity);
     }
 
     private UserEntity getUserEntity(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new BaseException(ErrorResult.USER_NOT_FOUND));
+        return userEntityRepository.findById(userId).orElseThrow(() -> new BaseException(ErrorResult.USER_NOT_FOUND));
     }
 }

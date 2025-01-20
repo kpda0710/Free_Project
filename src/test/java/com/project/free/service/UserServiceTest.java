@@ -4,19 +4,16 @@ import com.project.free.dto.UserRequest;
 import com.project.free.dto.UserResponse;
 import com.project.free.entity.UserEntity;
 import com.project.free.entity.UserStatus;
-import com.project.free.repository.UserRepository;
-import org.assertj.core.api.Assertions;
+import com.project.free.repository.UserEntityRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -27,7 +24,7 @@ class UserServiceTest {
     private UserService userService;
 
     @Mock
-    private UserRepository userRepository;
+    private UserEntityRepository userEntityRepository;
 
     @Test
     public void createUser() throws Exception {
@@ -35,7 +32,7 @@ class UserServiceTest {
 
         UserEntity userEntity = getUserEntity();
 
-        when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
+        when(userEntityRepository.save(any(UserEntity.class))).thenReturn(userEntity);
 
         UserResponse result = userService.createUser(userRequest);
 
@@ -49,7 +46,7 @@ class UserServiceTest {
     public void getUser() throws Exception {
         UserEntity userEntity = getUserEntity();
 
-        when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(userEntity));
+        when(userEntityRepository.findById(1L)).thenReturn(Optional.ofNullable(userEntity));
 
         UserResponse result = userService.getUser(1L);
 
@@ -63,8 +60,8 @@ class UserServiceTest {
         UserEntity userEntity = getUserEntity();
         UserRequest userRequest = getUserRequest();
 
-        when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(userEntity));
-        when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
+        when(userEntityRepository.findById(1L)).thenReturn(Optional.ofNullable(userEntity));
+        when(userEntityRepository.save(any(UserEntity.class))).thenReturn(userEntity);
 
         UserResponse result = userService.updateUser(1L, userRequest);
 
@@ -78,8 +75,8 @@ class UserServiceTest {
     public void deleteUser() throws Exception {
         UserEntity userEntity = getUserEntity();
 
-        when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(userEntity));
-        when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
+        when(userEntityRepository.findById(1L)).thenReturn(Optional.ofNullable(userEntity));
+        when(userEntityRepository.save(any(UserEntity.class))).thenReturn(userEntity);
 
         userService.deleteUser(1L);
 
