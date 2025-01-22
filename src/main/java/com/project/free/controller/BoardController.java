@@ -1,5 +1,6 @@
 package com.project.free.controller;
 
+import com.project.free.dto.board.BoardCommentResponse;
 import com.project.free.dto.board.BoardRequest;
 import com.project.free.dto.board.BoardResponse;
 import com.project.free.dto.board.BoardUpdateRequest;
@@ -37,8 +38,8 @@ public class BoardController {
     }
 
     @GetMapping("/{boardId}")
-    public ResponseEntity<BoardResponse> getBoardById(@PathVariable(name = "boardId") Long boardId) {
-        BoardResponse boardResponse = boardService.getBoardByID(boardId);
+    public ResponseEntity<BoardCommentResponse> getBoardById(@PathVariable(name = "boardId") Long boardId) {
+        BoardCommentResponse boardResponse = boardService.getBoardByID(boardId);
         return ResponseEntity.status(HttpStatus.OK).body(boardResponse);
     }
 

@@ -7,6 +7,8 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Where;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -31,4 +33,7 @@ public class BoardEntity extends BaseEntity {
 
     @Column(nullable = false)
     private String writer;
+
+    @OneToMany
+    private List<CommentEntity> comments;
 }

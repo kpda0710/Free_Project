@@ -1,5 +1,6 @@
 package com.project.free.service;
 
+import com.project.free.dto.board.BoardCommentResponse;
 import com.project.free.dto.board.BoardRequest;
 import com.project.free.dto.board.BoardResponse;
 import com.project.free.dto.board.BoardUpdateRequest;
@@ -103,7 +104,7 @@ class BoardServiceTest {
 
         when(boardEntityRepository.findById(1L)).thenReturn(Optional.ofNullable(boardEntity));
 
-        BoardResponse result = boardService.getBoardByID(1L);
+        BoardCommentResponse result = boardService.getBoardByID(1L);
 
         assertThat(result.getTitle()).isEqualTo(boardEntity.getTitle());
         assertThat(result.getContent()).isEqualTo(boardEntity.getContent());
