@@ -20,6 +20,7 @@ public class UserService {
 
     private final UserEntityRepository userEntityRepository;
 
+    // 유저 생성
     public UserResponse createUser(UserRequest request) {
         UserEntity userEntity = UserEntity.builder()
                 .name(request.getName())
@@ -41,6 +42,7 @@ public class UserService {
                 .build();
     }
 
+    // 유저 정보 가져오기
     public UserResponse getUser(Long userId) {
         UserEntity userEntity = getUserEntity(userId);
 
@@ -55,6 +57,7 @@ public class UserService {
                 .build();
     }
 
+    // 유저 정보 수정
     public UserResponse updateUser(Long userId, UserRequest request) {
         UserEntity userEntity = getUserEntity(userId);
 
@@ -75,6 +78,7 @@ public class UserService {
                 .build();
     }
 
+    // 유저 정보 삭제
     public void deleteUser(Long userId) {
         UserEntity userEntity = getUserEntity(userId);
 
@@ -83,6 +87,7 @@ public class UserService {
         userEntityRepository.save(userEntity);
     }
 
+    // UserEntity 가져오기
     private UserEntity getUserEntity(Long userId) {
         return userEntityRepository.findById(userId).orElseThrow(() -> new BaseException(ErrorResult.USER_NOT_FOUND));
     }
