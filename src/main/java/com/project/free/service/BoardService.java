@@ -29,6 +29,7 @@ public class BoardService {
                 .title(boardRequest.getTitle())
                 .content(boardRequest.getContent())
                 .writer(boardRequest.getWriter())
+                .views(0L)
                 .build();
 
         BoardEntity saved = boardEntityRepository.save(boardEntity);
@@ -78,12 +79,15 @@ public class BoardService {
     // 게시글 자세히 보기
     public BoardDetailResponse getBoardByID(Long boardId) {
         BoardEntity boardEntity = getBoardEntityByID(boardId);
+        boardEntity.setViews(boardEntity.getViews() + 1);
+        boardEntityRepository.save(boardEntity);
 
         return BoardDetailResponse.builder()
                 .boardId(boardEntity.getBoardId())
                 .title(boardEntity.getTitle())
                 .content(boardEntity.getContent())
                 .writer(boardEntity.getWriter())
+                .views(boardEntity.getViews())
                 .comments(boardEntity.getComments().stream().map(commentEntity ->
                         CommentResponse.builder()
                                 .commentId(commentEntity.getCommentId())

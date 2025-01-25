@@ -23,6 +23,8 @@ public class BoardDetailResponse {
 
     private String writer;
 
+    private Long views;
+
     private List<CommentResponse> comments;
 
     private List<LikesResponse> likes;

@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Table(name = "board")
 @Entity
 @Getter
 @Setter
@@ -35,6 +36,9 @@ public class BoardEntity extends BaseEntity {
 
     @Column(nullable = false)
     private String writer;
+
+    @Column(nullable = false)
+    private Long views;
 
     @ToString.Exclude
     @OneToMany
