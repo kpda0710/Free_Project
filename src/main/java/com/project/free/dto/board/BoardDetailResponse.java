@@ -1,6 +1,7 @@
 package com.project.free.dto.board;
 
 import com.project.free.dto.comment.CommentResponse;
+import com.project.free.dto.like.LikesResponse;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoardCommentResponse {
+public class BoardDetailResponse {
 
     private Long boardId;
 
@@ -22,7 +23,9 @@ public class BoardCommentResponse {
 
     private String writer;
 
-    private List<CommentResponse> commentResponse;
+    private List<CommentResponse> comments;
+
+    private List<LikesResponse> likes;
 
     private LocalDateTime createdAt;
 
