@@ -1,6 +1,6 @@
 package com.project.free.controller;
 
-import com.project.free.dto.board.BoardCommentResponse;
+import com.project.free.dto.board.BoardDetailResponse;
 import com.project.free.dto.board.BoardRequest;
 import com.project.free.dto.board.BoardResponse;
 import com.project.free.dto.board.BoardUpdateRequest;
@@ -38,9 +38,15 @@ public class BoardController {
     }
 
     @GetMapping("/{boardId}")
-    public ResponseEntity<BoardCommentResponse> getBoardById(@PathVariable(name = "boardId") Long boardId) {
-        BoardCommentResponse boardResponse = boardService.getBoardByID(boardId);
+    public ResponseEntity<BoardDetailResponse> getBoardById(@PathVariable(name = "boardId") Long boardId) {
+        BoardDetailResponse boardResponse = boardService.getBoardByID(boardId);
         return ResponseEntity.status(HttpStatus.OK).body(boardResponse);
+    }
+
+    @GetMapping("/{boardId}/likes")
+    public ResponseEntity<Integer> getCountLikes(@PathVariable(name = "boardId") Long boardId) {
+        Integer likeCount = boardService.getCountLikes(boardId);
+        return ResponseEntity.status(HttpStatus.OK).body(likeCount);
     }
 
     @PutMapping("/{boardId}")
@@ -50,7 +56,7 @@ public class BoardController {
     }
 
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<BoardResponse> deleteBoard(@PathVariable(name = "boardId") Long boardId) {
+    public ResponseEntity<Void> deleteBoard(@PathVariable(name = "boardId") Long boardId) {
         boardService.deleteBoard(boardId);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }

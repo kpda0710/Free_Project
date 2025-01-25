@@ -7,6 +7,8 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Where;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,6 +36,11 @@ public class BoardEntity extends BaseEntity {
     @Column(nullable = false)
     private String writer;
 
+    @ToString.Exclude
     @OneToMany
     private List<CommentEntity> comments;
+
+    @ToString.Exclude
+    @OneToMany
+    private List<LikesEntity> likes;
 }

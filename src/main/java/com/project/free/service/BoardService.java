@@ -1,10 +1,11 @@
 package com.project.free.service;
 
-import com.project.free.dto.board.BoardCommentResponse;
+import com.project.free.dto.board.BoardDetailResponse;
 import com.project.free.dto.board.BoardRequest;
 import com.project.free.dto.board.BoardResponse;
 import com.project.free.dto.board.BoardUpdateRequest;
 import com.project.free.dto.comment.CommentResponse;
+import com.project.free.dto.like.LikesResponse;
 import com.project.free.entity.BoardEntity;
 import com.project.free.exception.BaseException;
 import com.project.free.exception.ErrorResult;
@@ -75,15 +76,15 @@ public class BoardService {
     }
 
     // 게시글 자세히 보기
-    public BoardCommentResponse getBoardByID(Long boardId) {
+    public BoardDetailResponse getBoardByID(Long boardId) {
         BoardEntity boardEntity = getBoardEntityByID(boardId);
 
-        return BoardCommentResponse.builder()
+        return BoardDetailResponse.builder()
                 .boardId(boardEntity.getBoardId())
                 .title(boardEntity.getTitle())
                 .content(boardEntity.getContent())
                 .writer(boardEntity.getWriter())
-                .commentResponse(boardEntity.getComments().stream().map(commentEntity ->
+                .comments(boardEntity.getComments().stream().map(commentEntity ->
                         CommentResponse.builder()
                                 .commentId(commentEntity.getCommentId())
                                 .boardId(commentEntity.getBoardId())
@@ -92,9 +93,21 @@ public class BoardService {
                                 .createdAt(commentEntity.getCreatedAt())
                                 .updatedAt(commentEntity.getUpdatedAt())
                                 .build()).collect(Collectors.toList()))
+                .likes(boardEntity.getLikes().stream().map(likesEntity ->
+                        LikesResponse.builder()
+                                .likesId(likesEntity.getLikesId())
+                                .boardId(likesEntity.getBoardId())
+                                .userId(likesEntity.getUserId())
+                                .build()).collect(Collectors.toList()))
                 .createdAt(boardEntity.getCreatedAt())
                 .updatedAt(boardEntity.getUpdatedAt())
                 .build();
+    }
+
+    // 좋아요 카운트
+    public Integer getCountLikes(Long boardId) {
+        BoardEntity boardEntity = getBoardEntityByID(boardId);
+        return boardEntity.getLikes().size();
     }
 
     // 게시글 수정
