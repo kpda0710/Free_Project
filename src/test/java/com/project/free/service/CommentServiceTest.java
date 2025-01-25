@@ -62,7 +62,6 @@ class CommentServiceTest {
 
         CommentUpdateRequest commentRequest = CommentUpdateRequest.builder()
                 .comment("comment@@")
-                .writer("writer@@")
                 .build();
 
         when(commentEntityRepository.findById(1L)).thenReturn(Optional.ofNullable(commentEntity));
@@ -71,7 +70,6 @@ class CommentServiceTest {
         CommentResponse result = commentService.updateComment(1L, commentRequest);
 
         assertThat(result.getComment()).isEqualTo(commentRequest.getComment());
-        assertThat(result.getWriter()).isEqualTo(commentRequest.getWriter());
     }
 
     @Test
