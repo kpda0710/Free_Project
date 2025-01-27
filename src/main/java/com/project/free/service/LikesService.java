@@ -10,6 +10,7 @@ import com.project.free.repository.BoardEntityRepository;
 import com.project.free.repository.LikesEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class LikesService {
     private final BoardEntityRepository boardEntityRepository;
 
     // 좋아요 누리기
+    @Transactional
     public LikesResponse createLikes(LikesRequest likesRequest) {
         BoardEntity boardEntity = boardEntityRepository.findById(likesRequest.getBoardId()).orElseThrow(() -> new BaseException(ErrorResult.BOARD_NOT_FOUND));
         likesEntityRepository.findByUserIdAndBoardId(likesRequest.getUserId(), likesRequest.getBoardId())
@@ -31,12 +33,21 @@ public class LikesService {
         LikesEntity likesEntity = LikesEntity.builder()
                 .boardId(likesRequest.getBoardId())
                 .userId(likesRequest.getUserId())
+                .isDeleted(false)
                 .build();
 
         LikesEntity saved = likesEntityRepository.save(likesEntity);
 
         if (boardEntity.getLikes() == null) {
-            boardEntity.setLikes(new ArrayList<>());
+            boardEntity = BoardEntity.builder()
+                    .boardId(boardEntity.getBoardId())
+                    .title(boardEntity.getTitle())
+                    .content(boardEntity.getContent())
+                    .writer(boardEntity.getWriter())
+                    .views(boardEntity.getViews())
+                    .comments(boardEntity.getComments())
+                    .likes(new ArrayList<>())
+                    .build();
         }
 
         boardEntity.getLikes().add(saved);
@@ -55,7 +66,15 @@ public class LikesService {
         BoardEntity boardEntity = boardEntityRepository.findById(likesEntity.getBoardId()).orElseThrow(() -> new BaseException(ErrorResult.BOARD_NOT_FOUND));
 
         if (boardEntity.getLikes() == null) {
-            boardEntity.setLikes(new ArrayList<>());
+            boardEntity = BoardEntity.builder()
+                    .boardId(boardEntity.getBoardId())
+                    .title(boardEntity.getTitle())
+                    .content(boardEntity.getContent())
+                    .writer(boardEntity.getWriter())
+                    .views(boardEntity.getViews())
+                    .comments(boardEntity.getComments())
+                    .likes(new ArrayList<>())
+                    .build();
         }
 
         boardEntity.getLikes().remove(likesEntity);

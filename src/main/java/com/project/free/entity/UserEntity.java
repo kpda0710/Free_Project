@@ -3,19 +3,16 @@ package com.project.free.entity;
 import com.project.free.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Where;
 
 @Table(name = "users")
 @Entity
 @Getter
-@Builder
-@ToString
+@SuperBuilder
+@ToString(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DynamicInsert
-@DynamicUpdate
 @Where(clause = "is_deleted=false")
 public class UserEntity extends BaseEntity {
 

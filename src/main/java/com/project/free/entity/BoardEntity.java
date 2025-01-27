@@ -3,23 +3,18 @@ package com.project.free.entity;
 import com.project.free.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Where;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "board")
 @Entity
 @Getter
-@Builder
+@SuperBuilder
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@DynamicInsert
-@DynamicUpdate
 @Where(clause = "is_deleted=false")
 public class BoardEntity extends BaseEntity {
 

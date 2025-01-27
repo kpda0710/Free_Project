@@ -10,6 +10,7 @@ import com.project.free.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -21,12 +22,14 @@ public class UserService {
     private final UserEntityRepository userEntityRepository;
 
     // 유저 생성
+    @Transactional
     public UserResponse createUser(UserRequest request) {
         UserEntity userEntity = UserEntity.builder()
                 .name(request.getName())
                 .password(request.getPassword())
                 .email(request.getEmail())
                 .status(UserStatus.USER)
+                .isDeleted(false)
                 .build();
 
         UserEntity saved = userEntityRepository.save(userEntity);
@@ -58,14 +61,22 @@ public class UserService {
     }
 
     // 유저 정보 수정
+    @Transactional
     public UserResponse updateUser(Long userId, UserRequest request) {
         UserEntity userEntity = getUserEntity(userId);
 
-        userEntity.setName(request.getName());
-        userEntity.setPassword(request.getPassword());
-        userEntity.setEmail(request.getEmail());
+        UserEntity updatedUserEntity = UserEntity.builder()
+                .userId(userEntity.getUserId())
+                .name(request.getName())
+                .password(request.getPassword())
+                .email(request.getEmail())
+                .status(userEntity.getStatus())
+                .createdAt(userEntity.getCreatedAt())
+                .updatedAt(LocalDateTime.now())
+                .isDeleted(userEntity.getIsDeleted())
+                .build();
 
-        UserEntity saved = userEntityRepository.save(userEntity);
+        UserEntity saved = userEntityRepository.save(updatedUserEntity);
 
         return UserResponse.builder()
                 .userId(saved.getUserId())

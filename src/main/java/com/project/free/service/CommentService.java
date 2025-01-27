@@ -11,6 +11,7 @@ import com.project.free.repository.BoardEntityRepository;
 import com.project.free.repository.CommentEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,6 +24,7 @@ public class CommentService {
     private final BoardEntityRepository boardEntityRepository;
 
     // 댓글 생성
+    @Transactional
     public CommentResponse createComment(CommentRequest commentRequest) {
         BoardEntity boardEntity = boardEntityRepository.findById(commentRequest.getBoardId()).orElseThrow(() -> new BaseException(ErrorResult.BOARD_NOT_FOUND));
 
@@ -30,6 +32,7 @@ public class CommentService {
                 .boardId(commentRequest.getBoardId())
                 .comment(commentRequest.getComment())
                 .writer(commentRequest.getWriter())
+                .isDeleted(false)
                 .build();
 
         List<CommentEntity> boardEntityComments = boardEntity.getComments();
@@ -49,20 +52,29 @@ public class CommentService {
     }
 
     // 댓글 수정
+    @Transactional
     public CommentResponse updateComment(Long commentId, CommentUpdateRequest commentUpdateRequest) {
         CommentEntity commentEntity = getCommentEntity(commentId);
 
-        commentEntity.setComment(commentUpdateRequest.getComment());
-
-        commentEntityRepository.save(commentEntity);
-
-        return CommentResponse.builder()
+        CommentEntity updatedCommentEntity = CommentEntity.builder()
                 .commentId(commentEntity.getCommentId())
                 .boardId(commentEntity.getBoardId())
-                .comment(commentEntity.getComment())
+                .comment(commentUpdateRequest.getComment())
                 .writer(commentEntity.getWriter())
                 .createdAt(commentEntity.getCreatedAt())
-                .updatedAt(commentEntity.getUpdatedAt())
+                .updatedAt(LocalDateTime.now())
+                .isDeleted(commentEntity.getIsDeleted())
+                .build();
+
+        CommentEntity saved = commentEntityRepository.save(updatedCommentEntity);
+
+        return CommentResponse.builder()
+                .commentId(saved.getCommentId())
+                .boardId(saved.getBoardId())
+                .comment(saved.getComment())
+                .writer(saved.getWriter())
+                .createdAt(saved.getCreatedAt())
+                .updatedAt(saved.getUpdatedAt())
                 .build();
     }
 

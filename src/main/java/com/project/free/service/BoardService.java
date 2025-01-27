@@ -12,6 +12,7 @@ import com.project.free.exception.ErrorResult;
 import com.project.free.repository.BoardEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,12 +25,14 @@ public class BoardService {
     private final BoardEntityRepository boardEntityRepository;
 
     // 게시글 생성
+    @Transactional
     public BoardResponse createBoard(BoardRequest boardRequest) {
         BoardEntity boardEntity = BoardEntity.builder()
                 .title(boardRequest.getTitle())
                 .content(boardRequest.getContent())
                 .writer(boardRequest.getWriter())
                 .views(0L)
+                .isDeleted(false)
                 .build();
 
         BoardEntity saved = boardEntityRepository.save(boardEntity);
@@ -79,16 +82,29 @@ public class BoardService {
     // 게시글 자세히 보기
     public BoardDetailResponse getBoardByID(Long boardId) {
         BoardEntity boardEntity = getBoardEntityByID(boardId);
-        boardEntity.setViews(boardEntity.getViews() + 1);
-        boardEntityRepository.save(boardEntity);
 
-        return BoardDetailResponse.builder()
+        boardEntity = BoardEntity.builder()
                 .boardId(boardEntity.getBoardId())
                 .title(boardEntity.getTitle())
                 .content(boardEntity.getContent())
                 .writer(boardEntity.getWriter())
-                .views(boardEntity.getViews())
-                .comments(boardEntity.getComments().stream().map(commentEntity ->
+                .views(boardEntity.getViews() + 1)
+                .comments(boardEntity.getComments())
+                .likes(boardEntity.getLikes())
+                .createdAt(boardEntity.getCreatedAt())
+                .updatedAt(boardEntity.getUpdatedAt())
+                .isDeleted(boardEntity.getIsDeleted())
+                .build();
+
+        BoardEntity saved = boardEntityRepository.save(boardEntity);
+
+        return BoardDetailResponse.builder()
+                .boardId(saved.getBoardId())
+                .title(saved.getTitle())
+                .content(saved.getContent())
+                .writer(saved.getWriter())
+                .views(saved.getViews())
+                .comments(saved.getComments().stream().map(commentEntity ->
                         CommentResponse.builder()
                                 .commentId(commentEntity.getCommentId())
                                 .boardId(commentEntity.getBoardId())
@@ -97,14 +113,14 @@ public class BoardService {
                                 .createdAt(commentEntity.getCreatedAt())
                                 .updatedAt(commentEntity.getUpdatedAt())
                                 .build()).collect(Collectors.toList()))
-                .likes(boardEntity.getLikes().stream().map(likesEntity ->
+                .likes(saved.getLikes().stream().map(likesEntity ->
                         LikesResponse.builder()
                                 .likesId(likesEntity.getLikesId())
                                 .boardId(likesEntity.getBoardId())
                                 .userId(likesEntity.getUserId())
                                 .build()).collect(Collectors.toList()))
-                .createdAt(boardEntity.getCreatedAt())
-                .updatedAt(boardEntity.getUpdatedAt())
+                .createdAt(saved.getCreatedAt())
+                .updatedAt(saved.getUpdatedAt())
                 .build();
     }
 
@@ -115,13 +131,24 @@ public class BoardService {
     }
 
     // 게시글 수정
+    @Transactional
     public BoardResponse updateBoard(Long boardId, BoardUpdateRequest boardRequest) {
         BoardEntity boardEntity = getBoardEntityByID(boardId);
 
-        boardEntity.setTitle(boardRequest.getTitle());
-        boardEntity.setContent(boardRequest.getContent());
+        BoardEntity updatedBoardEntity = BoardEntity.builder()
+                .boardId(boardEntity.getBoardId())
+                .title(boardRequest.getTitle())
+                .content(boardRequest.getContent())
+                .writer(boardEntity.getWriter())
+                .views(boardEntity.getViews())
+                .comments(boardEntity.getComments())
+                .likes(boardEntity.getLikes())
+                .createdAt(boardEntity.getCreatedAt())
+                .updatedAt(LocalDateTime.now())
+                .isDeleted(boardEntity.getIsDeleted())
+                .build();
 
-        BoardEntity saved = boardEntityRepository.save(boardEntity);
+        BoardEntity saved = boardEntityRepository.save(updatedBoardEntity);
 
         return BoardResponse.builder()
                 .boardId(saved.getBoardId())
