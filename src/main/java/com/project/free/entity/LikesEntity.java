@@ -10,11 +10,10 @@ import org.hibernate.annotations.Where;
 @Table(name = "likes")
 @Entity
 @Getter
-@Setter
 @Builder
 @ToString
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
 @DynamicUpdate
 @Where(clause = "is_deleted=false")
