@@ -9,9 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/likes")
+@RequestMapping("/api/likes")
 @RequiredArgsConstructor
-public class LikesController {
+public class LikesApiController {
 
     private final LikesService likesService;
 
