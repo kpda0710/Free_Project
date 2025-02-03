@@ -8,11 +8,7 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoardUpdateRequest {
+public class BoardDeleteRequest {
 
     private Long userId;
-
-    private String title;
-
-    private String content;
 }

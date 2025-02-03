@@ -1,18 +1,15 @@
 package com.project.free.service;
 
-import com.project.free.dto.board.BoardDetailResponse;
-import com.project.free.dto.board.BoardRequest;
-import com.project.free.dto.board.BoardResponse;
-import com.project.free.dto.board.BoardUpdateRequest;
+import com.project.free.dto.board.*;
 import com.project.free.dto.comment.CommentResponse;
 import com.project.free.dto.like.LikesResponse;
 import com.project.free.entity.BoardEntity;
 import com.project.free.exception.BaseException;
 import com.project.free.exception.ErrorResult;
 import com.project.free.repository.BoardEntityRepository;
+import com.project.free.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,11 +20,14 @@ import java.util.stream.Collectors;
 public class BoardService {
 
     private final BoardEntityRepository boardEntityRepository;
+    private final UserEntityRepository userEntityRepository;
 
     // 게시글 생성
-    @Transactional
     public BoardResponse createBoard(BoardRequest boardRequest) {
+        userEntityRepository.findById(boardRequest.getUserId()).orElseThrow(() -> new BaseException(ErrorResult.USER_NOT_FOUND));
+
         BoardEntity boardEntity = BoardEntity.builder()
+                .userId(boardRequest.getUserId())
                 .title(boardRequest.getTitle())
                 .content(boardRequest.getContent())
                 .writer(boardRequest.getWriter())
@@ -39,6 +39,7 @@ public class BoardService {
 
         return BoardResponse.builder()
                 .boardId(saved.getBoardId())
+                .userId(saved.getUserId())
                 .title(saved.getTitle())
                 .content(saved.getContent())
                 .writer(saved.getWriter())
@@ -54,6 +55,7 @@ public class BoardService {
         return boardEntityList.stream().map(boardEntity ->
                 BoardResponse.builder()
                         .boardId(boardEntity.getBoardId())
+                        .userId(boardEntity.getUserId())
                         .title(boardEntity.getTitle())
                         .content(boardEntity.getContent())
                         .writer(boardEntity.getWriter())
@@ -70,6 +72,7 @@ public class BoardService {
         return boardEntityList.stream().map(boardEntity ->
                         BoardResponse.builder()
                                 .boardId(boardEntity.getBoardId())
+                                .userId(boardEntity.getUserId())
                                 .title(boardEntity.getTitle())
                                 .content(boardEntity.getContent())
                                 .writer(boardEntity.getWriter())
@@ -85,6 +88,7 @@ public class BoardService {
 
         boardEntity = BoardEntity.builder()
                 .boardId(boardEntity.getBoardId())
+                .userId(boardEntity.getUserId())
                 .title(boardEntity.getTitle())
                 .content(boardEntity.getContent())
                 .writer(boardEntity.getWriter())
@@ -100,6 +104,7 @@ public class BoardService {
 
         return BoardDetailResponse.builder()
                 .boardId(saved.getBoardId())
+                .userId(saved.getUserId())
                 .title(saved.getTitle())
                 .content(saved.getContent())
                 .writer(saved.getWriter())
@@ -131,12 +136,16 @@ public class BoardService {
     }
 
     // 게시글 수정
-    @Transactional
     public BoardResponse updateBoard(Long boardId, BoardUpdateRequest boardRequest) {
         BoardEntity boardEntity = getBoardEntityByID(boardId);
 
+        if (!boardEntity.getUserId().equals(boardRequest.getUserId())) {
+            throw new BaseException(ErrorResult.BOARD_USERID_NOT_MATCH);
+        }
+
         BoardEntity updatedBoardEntity = BoardEntity.builder()
                 .boardId(boardEntity.getBoardId())
+                .userId(boardRequest.getUserId())
                 .title(boardRequest.getTitle())
                 .content(boardRequest.getContent())
                 .writer(boardEntity.getWriter())
@@ -152,6 +161,7 @@ public class BoardService {
 
         return BoardResponse.builder()
                 .boardId(saved.getBoardId())
+                .userId(saved.getUserId())
                 .title(saved.getTitle())
                 .content(saved.getContent())
                 .writer(saved.getWriter())
@@ -161,8 +171,12 @@ public class BoardService {
     }
 
     // 게시글 삭제
-    public void deleteBoard(Long boardId) {
+    public void deleteBoard(Long boardId, BoardDeleteRequest boardDeleteRequest) {
         BoardEntity boardEntity = getBoardEntityByID(boardId);
+
+        if (!boardEntity.getUserId().equals(boardDeleteRequest.getUserId())) {
+            throw new BaseException(ErrorResult.BOARD_USERID_NOT_MATCH);
+        }
 
         boardEntity.setIsDeleted(true);
         boardEntity.setDeletedAt(LocalDateTime.now());

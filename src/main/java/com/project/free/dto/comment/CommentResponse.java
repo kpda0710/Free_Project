@@ -14,6 +14,8 @@ public class CommentResponse {
 
     private Long commentId;
 
+    private Long userId;
+
     private Long boardId;
 
     private String comment;

@@ -1,5 +1,6 @@
 package com.project.free.service;
 
+import com.project.free.dto.like.LikesDeleteRequest;
 import com.project.free.dto.like.LikesRequest;
 import com.project.free.dto.like.LikesResponse;
 import com.project.free.entity.BoardEntity;
@@ -8,6 +9,7 @@ import com.project.free.exception.BaseException;
 import com.project.free.exception.ErrorResult;
 import com.project.free.repository.BoardEntityRepository;
 import com.project.free.repository.LikesEntityRepository;
+import com.project.free.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +25,12 @@ public class LikesService {
 
     private final BoardEntityRepository boardEntityRepository;
 
+    private final UserEntityRepository userEntityRepository;
+
     // 좋아요 누리기
     @Transactional
     public LikesResponse createLikes(LikesRequest likesRequest) {
+        userEntityRepository.findById(likesRequest.getUserId()).orElseThrow(() -> new BaseException(ErrorResult.USER_NOT_FOUND));
         BoardEntity boardEntity = boardEntityRepository.findById(likesRequest.getBoardId()).orElseThrow(() -> new BaseException(ErrorResult.BOARD_NOT_FOUND));
         likesEntityRepository.findByUserIdAndBoardId(likesRequest.getUserId(), likesRequest.getBoardId())
                 .ifPresent(likesEntity -> {throw new BaseException(ErrorResult.LIKES_DUPLICATE);});
@@ -61,9 +66,10 @@ public class LikesService {
     }
 
     // 좋아요 취소
-    public void deleteLikes(Long likesId) {
-        LikesEntity likesEntity = likesEntityRepository.findById(likesId).orElseThrow(() -> new BaseException(ErrorResult.LIKES_NOT_FOUND));
-        BoardEntity boardEntity = boardEntityRepository.findById(likesEntity.getBoardId()).orElseThrow(() -> new BaseException(ErrorResult.BOARD_NOT_FOUND));
+    public void deleteLikes(LikesDeleteRequest likesDeleteRequest) {
+        userEntityRepository.findById(likesDeleteRequest.getUserId()).orElseThrow(() -> new BaseException(ErrorResult.USER_NOT_FOUND));
+        BoardEntity boardEntity = boardEntityRepository.findById(likesDeleteRequest.getBoardId()).orElseThrow(() -> new BaseException(ErrorResult.BOARD_NOT_FOUND));
+        LikesEntity likesEntity = likesEntityRepository.findByUserIdAndBoardId(likesDeleteRequest.getUserId(), likesDeleteRequest.getBoardId()).orElseThrow(() -> new BaseException(ErrorResult.LIKES_NOT_FOUND));
 
         if (boardEntity.getLikes() == null) {
             boardEntity = BoardEntity.builder()

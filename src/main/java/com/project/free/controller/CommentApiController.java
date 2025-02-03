@@ -1,5 +1,6 @@
 package com.project.free.controller;
 
+import com.project.free.dto.comment.CommentDeleteRequest;
 import com.project.free.dto.comment.CommentRequest;
 import com.project.free.dto.comment.CommentResponse;
 import com.project.free.dto.comment.CommentUpdateRequest;
@@ -29,8 +30,8 @@ public class CommentApiController {
     }
 
     @DeleteMapping("{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable(name = "commentId") Long commentId) {
-        commentService.deleteComment(commentId);
+    public ResponseEntity<Void> deleteComment(@RequestBody CommentDeleteRequest commentDeleteRequest) {
+        commentService.deleteComment(commentDeleteRequest);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

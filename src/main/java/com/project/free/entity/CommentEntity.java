@@ -20,6 +20,8 @@ public class CommentEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
 
+    private Long userId;
+
     private Long boardId;
 
     @Column(nullable = false)

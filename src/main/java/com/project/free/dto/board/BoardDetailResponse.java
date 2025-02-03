@@ -17,6 +17,8 @@ public class BoardDetailResponse {
 
     private Long boardId;
 
+    private Long userId;
+
     private String title;
 
     private String content;

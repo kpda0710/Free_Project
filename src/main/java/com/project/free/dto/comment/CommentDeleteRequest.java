@@ -8,13 +8,11 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentRequest {
+public class CommentDeleteRequest {
 
     private Long userId;
 
     private Long boardId;
 
-    private String comment;
-
-    private String writer;
+    private Long commentId;
 }

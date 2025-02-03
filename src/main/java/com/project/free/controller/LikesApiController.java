@@ -1,5 +1,6 @@
 package com.project.free.controller;
 
+import com.project.free.dto.like.LikesDeleteRequest;
 import com.project.free.dto.like.LikesRequest;
 import com.project.free.dto.like.LikesResponse;
 import com.project.free.service.LikesService;
@@ -21,9 +22,9 @@ public class LikesApiController {
         return ResponseEntity.status(HttpStatus.OK).body(likesResponse);
     }
 
-    @DeleteMapping("{likesId}")
-    public ResponseEntity<Void> deleteLikes(@PathVariable(name = "likesId") Long likesId) {
-        likesService.deleteLikes(likesId);
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteLikes(@RequestBody LikesDeleteRequest likesDeleteRequest) {
+        likesService.deleteLikes(likesDeleteRequest);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

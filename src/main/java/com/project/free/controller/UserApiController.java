@@ -1,5 +1,6 @@
 package com.project.free.controller;
 
+import com.project.free.dto.user.UserGetRequest;
 import com.project.free.dto.user.UserRequest;
 import com.project.free.dto.user.UserResponse;
 import com.project.free.service.UserService;
@@ -21,9 +22,9 @@ public class UserApiController {
         return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserResponse> getUser(@PathVariable(name = "userId") Long userId) {
-        UserResponse userResponse = userService.getUser(userId);
+    @GetMapping()
+    public ResponseEntity<UserResponse> getUser(@RequestBody UserGetRequest userGetRequest) {
+        UserResponse userResponse = userService.getUser(userGetRequest);
         return ResponseEntity.status(HttpStatus.OK).body(userResponse);
     }
 

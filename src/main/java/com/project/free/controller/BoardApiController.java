@@ -1,9 +1,6 @@
 package com.project.free.controller;
 
-import com.project.free.dto.board.BoardDetailResponse;
-import com.project.free.dto.board.BoardRequest;
-import com.project.free.dto.board.BoardResponse;
-import com.project.free.dto.board.BoardUpdateRequest;
+import com.project.free.dto.board.*;
 import com.project.free.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -56,8 +53,8 @@ public class BoardApiController {
     }
 
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<Void> deleteBoard(@PathVariable(name = "boardId") Long boardId) {
-        boardService.deleteBoard(boardId);
+    public ResponseEntity<Void> deleteBoard(@PathVariable(name = "boardId") Long boardId, @RequestBody BoardDeleteRequest boardDeleteRequest) {
+        boardService.deleteBoard(boardId, boardDeleteRequest);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

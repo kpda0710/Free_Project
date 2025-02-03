@@ -1,5 +1,6 @@
 package com.project.free.service;
 
+import com.project.free.dto.user.UserGetRequest;
 import com.project.free.dto.user.UserRequest;
 import com.project.free.dto.user.UserResponse;
 import com.project.free.entity.UserEntity;
@@ -46,8 +47,16 @@ public class UserService {
     }
 
     // 유저 정보 가져오기
-    public UserResponse getUser(Long userId) {
-        UserEntity userEntity = getUserEntity(userId);
+    public UserResponse getUser(UserGetRequest userGetRequest) {
+        UserEntity userEntity = getUserEntity(userGetRequest.getUserId());
+
+        if (!userEntity.getEmail().equals(userGetRequest.getEmail())) {
+            throw new BaseException(ErrorResult.USER_NOT_MATCH_EMAIL);
+        }
+
+        if (!userEntity.getPassword().equals(userGetRequest.getPassword())) {
+            throw new BaseException(ErrorResult.USER_NOT_MATCH_PASSWORD);
+        }
 
         return UserResponse.builder()
                 .userId(userEntity.getUserId())
