@@ -1,15 +1,16 @@
 package com.project.free.service;
 
-import com.project.free.dto.user.UserGetRequest;
-import com.project.free.dto.user.UserRequest;
-import com.project.free.dto.user.UserResponse;
+import com.project.free.dto.user.*;
 import com.project.free.entity.UserEntity;
 import com.project.free.entity.UserStatus;
 import com.project.free.exception.BaseException;
 import com.project.free.exception.ErrorResult;
 import com.project.free.repository.UserEntityRepository;
+import com.project.free.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,13 +22,15 @@ import java.time.LocalDateTime;
 public class UserService {
 
     private final UserEntityRepository userEntityRepository;
+    private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
 
-    // 유저 생성
+    // 유저 가입
     @Transactional
-    public UserResponse createUser(UserRequest request) {
+    public UserResponse signupUser(UserRequest request) {
         UserEntity userEntity = UserEntity.builder()
                 .name(request.getName())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .email(request.getEmail())
                 .status(UserStatus.USER)
                 .isDeleted(false)
@@ -46,17 +49,34 @@ public class UserService {
                 .build();
     }
 
-    // 유저 정보 가져오기
-    public UserResponse getUser(UserGetRequest userGetRequest) {
-        UserEntity userEntity = getUserEntity(userGetRequest.getUserId());
+    // 유저 로그인
+    @Transactional(readOnly = true)
+    public String loginUser(UserLoginRequest userLoginRequest) {
+        String email = userLoginRequest.getEmail();
+        String password = userLoginRequest.getPassword();
+        UserEntity userEntity = userEntityRepository.findByEmail(email).orElseThrow(() -> new BaseException(ErrorResult.USER_NOT_FOUND));
 
-        if (!userEntity.getEmail().equals(userGetRequest.getEmail())) {
-            throw new BaseException(ErrorResult.USER_NOT_MATCH_EMAIL);
-        }
-
-        if (!userEntity.getPassword().equals(userGetRequest.getPassword())) {
+        if (!passwordEncoder.matches(password, userEntity.getPassword())) {
             throw new BaseException(ErrorResult.USER_NOT_MATCH_PASSWORD);
         }
+
+        UserInfoDto userInfoDto = UserInfoDto.builder()
+                .userId(userEntity.getUserId())
+                .email(userEntity.getEmail())
+                .name(userEntity.getName())
+                .password(userEntity.getPassword())
+                .status(userEntity.getStatus())
+                .build();
+
+        return jwtUtil.createAccessToken(userInfoDto);
+    }
+
+    // 유저 정보 가져오기
+    @Transactional(readOnly = true)
+    public UserResponse getUser(Authentication authentication) {
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+
+        UserEntity userEntity = getUserEntity(principal.getUserInfoDto().getUserId());
 
         return UserResponse.builder()
                 .userId(userEntity.getUserId())
@@ -69,10 +89,12 @@ public class UserService {
                 .build();
     }
 
-    // 유저 정보 수정
+    // 유저 정보 업데이트
     @Transactional
-    public UserResponse updateUser(Long userId, UserRequest request) {
-        UserEntity userEntity = getUserEntity(userId);
+    public UserResponse updateUser(UserRequest request, Authentication authentication) {
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+
+        UserEntity userEntity = getUserEntity(principal.getUserInfoDto().getUserId());
 
         UserEntity updatedUserEntity = UserEntity.builder()
                 .userId(userEntity.getUserId())
@@ -99,8 +121,11 @@ public class UserService {
     }
 
     // 유저 정보 삭제
-    public void deleteUser(Long userId) {
-        UserEntity userEntity = getUserEntity(userId);
+    @Transactional
+    public void deleteUser(Authentication authentication) {
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+
+        UserEntity userEntity = getUserEntity(principal.getUserInfoDto().getUserId());
 
         userEntity.setIsDeleted(true);
         userEntity.setDeletedAt(LocalDateTime.now());
