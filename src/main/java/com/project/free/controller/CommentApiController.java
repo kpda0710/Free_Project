@@ -8,6 +8,7 @@ import com.project.free.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,20 +19,20 @@ public class CommentApiController {
     private final CommentService commentService;
 
     @PostMapping()
-    public ResponseEntity<CommentResponse> createComment(@RequestBody CommentRequest commentRequest) {
-        CommentResponse commentResponse = commentService.createComment(commentRequest);
+    public ResponseEntity<CommentResponse> createComment(@RequestBody CommentRequest commentRequest, Authentication authentication) {
+        CommentResponse commentResponse = commentService.createComment(commentRequest, authentication);
         return ResponseEntity.status(HttpStatus.OK).body(commentResponse);
     }
 
     @PutMapping("{commentId}")
-    public ResponseEntity<CommentResponse> updateComment(@PathVariable(name = "commentId") Long commentId, @RequestBody CommentUpdateRequest commentUpdateRequest) {
+    public ResponseEntity<CommentResponse> updateComment(@PathVariable(name = "commentId") Long commentId, @RequestBody CommentUpdateRequest commentUpdateRequest, Authentication authentication) {
         CommentResponse commentResponse = commentService.updateComment(commentId, commentUpdateRequest);
         return ResponseEntity.status(HttpStatus.OK).body(commentResponse);
     }
 
     @DeleteMapping("{commentId}")
-    public ResponseEntity<Void> deleteComment(@RequestBody CommentDeleteRequest commentDeleteRequest) {
-        commentService.deleteComment(commentDeleteRequest);
+    public ResponseEntity<Void> deleteComment(@PathVariable(name = "commentId") Long commentId, Authentication authentication) {
+        commentService.deleteComment(commentId);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

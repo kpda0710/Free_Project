@@ -29,4 +29,8 @@ public class CommentEntity extends BaseEntity {
 
     @Column(nullable = false)
     private String writer;
+
+    public void updateWriter(String writer) {
+        this.writer = writer;
+    }
 }

@@ -10,8 +10,6 @@ import lombok.*;
 @NoArgsConstructor
 public class CommentDeleteRequest {
 
-    private Long userId;
-
     private Long boardId;
 
     private Long commentId;
