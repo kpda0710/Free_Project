@@ -11,6 +11,4 @@ import lombok.*;
 public class LikesRequest {
 
     private Long boardId;
-
-    private Long userId;
 }
