@@ -27,8 +27,8 @@ public class LikesService {
 
     private final UserEntityRepository userEntityRepository;
 
-    // 좋아요 누리기
     @Transactional
+    // 좋아요 누르기
     public LikesResponse createLikes(LikesRequest likesRequest) {
         userEntityRepository.findById(likesRequest.getUserId()).orElseThrow(() -> new BaseException(ErrorResult.USER_NOT_FOUND));
         BoardEntity boardEntity = boardEntityRepository.findById(likesRequest.getBoardId()).orElseThrow(() -> new BaseException(ErrorResult.BOARD_NOT_FOUND));
@@ -65,6 +65,7 @@ public class LikesService {
                 .build();
     }
 
+    @Transactional
     // 좋아요 취소
     public void deleteLikes(LikesDeleteRequest likesDeleteRequest) {
         userEntityRepository.findById(likesDeleteRequest.getUserId()).orElseThrow(() -> new BaseException(ErrorResult.USER_NOT_FOUND));

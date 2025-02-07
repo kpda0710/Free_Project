@@ -10,6 +10,7 @@ import com.project.free.repository.BoardEntityRepository;
 import com.project.free.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,6 +23,7 @@ public class BoardService {
     private final BoardEntityRepository boardEntityRepository;
     private final UserEntityRepository userEntityRepository;
 
+    @Transactional
     // 게시글 생성
     public BoardResponse createBoard(BoardRequest boardRequest) {
         userEntityRepository.findById(boardRequest.getUserId()).orElseThrow(() -> new BaseException(ErrorResult.USER_NOT_FOUND));
@@ -48,6 +50,7 @@ public class BoardService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     // 게시글 전체 검색
     public List<BoardResponse> getAllBoards() {
         List<BoardEntity> boardEntityList = boardEntityRepository.findAll();
@@ -65,6 +68,7 @@ public class BoardService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     // 제목으로 게시글 검색
     public List<BoardResponse> getBoardsByTitle(String title) {
         List<BoardEntity> boardEntityList = boardEntityRepository.findByTitle(title);
@@ -82,6 +86,7 @@ public class BoardService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     // 게시글 자세히 보기
     public BoardDetailResponse getBoardByID(Long boardId) {
         BoardEntity boardEntity = getBoardEntityByID(boardId);
@@ -129,12 +134,14 @@ public class BoardService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     // 좋아요 카운트
     public Integer getCountLikes(Long boardId) {
         BoardEntity boardEntity = getBoardEntityByID(boardId);
         return boardEntity.getLikes().size();
     }
 
+    @Transactional
     // 게시글 수정
     public BoardResponse updateBoard(Long boardId, BoardUpdateRequest boardRequest) {
         BoardEntity boardEntity = getBoardEntityByID(boardId);
@@ -170,6 +177,7 @@ public class BoardService {
                 .build();
     }
 
+    @Transactional
     // 게시글 삭제
     public void deleteBoard(Long boardId, BoardDeleteRequest boardDeleteRequest) {
         BoardEntity boardEntity = getBoardEntityByID(boardId);

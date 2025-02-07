@@ -13,6 +13,7 @@ import com.project.free.repository.CommentEntityRepository;
 import com.project.free.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +26,7 @@ public class CommentService {
     private final BoardEntityRepository boardEntityRepository;
     private final UserEntityRepository userEntityRepository;
 
+    @Transactional
     // 댓글 생성
     public CommentResponse createComment(CommentRequest commentRequest) {
         userEntityRepository.findById(commentRequest.getUserId()).orElseThrow(() -> new BaseException(ErrorResult.USER_NOT_FOUND));
@@ -56,6 +58,7 @@ public class CommentService {
                 .build();
     }
 
+    @Transactional
     // 댓글 수정
     public CommentResponse updateComment(Long commentId, CommentUpdateRequest commentUpdateRequest) {
         CommentEntity commentEntity = getCommentEntity(commentId);
@@ -86,6 +89,7 @@ public class CommentService {
                 .build();
     }
 
+    @Transactional
     // 댓글 삭제
     public void deleteComment(CommentDeleteRequest commentDeleteRequest) {
         userEntityRepository.findById(commentDeleteRequest.getUserId()).orElseThrow(() -> new BaseException(ErrorResult.USER_NOT_FOUND));
