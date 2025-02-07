@@ -43,4 +43,8 @@ public class BoardEntity extends BaseEntity {
     @ToString.Exclude
     @OneToMany
     private List<LikesEntity> likes;
+
+    public void updateWriter(String writer) {
+        this.writer = writer;
+    }
 }

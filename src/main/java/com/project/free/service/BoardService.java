@@ -3,12 +3,16 @@ package com.project.free.service;
 import com.project.free.dto.board.*;
 import com.project.free.dto.comment.CommentResponse;
 import com.project.free.dto.like.LikesResponse;
+import com.project.free.dto.user.CustomUserDetails;
+import com.project.free.dto.user.UserInfoDto;
+import com.project.free.dto.user.UserRequest;
 import com.project.free.entity.BoardEntity;
 import com.project.free.exception.BaseException;
 import com.project.free.exception.ErrorResult;
 import com.project.free.repository.BoardEntityRepository;
 import com.project.free.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,14 +29,14 @@ public class BoardService {
 
     @Transactional
     // 게시글 생성
-    public BoardResponse createBoard(BoardRequest boardRequest) {
-        userEntityRepository.findById(boardRequest.getUserId()).orElseThrow(() -> new BaseException(ErrorResult.USER_NOT_FOUND));
+    public BoardResponse createBoard(BoardRequest boardRequest, Authentication authentication) {
+        UserInfoDto userInfoDto = getUserInfoDto(authentication);
 
         BoardEntity boardEntity = BoardEntity.builder()
-                .userId(boardRequest.getUserId())
+                .userId(userInfoDto.getUserId())
                 .title(boardRequest.getTitle())
                 .content(boardRequest.getContent())
-                .writer(boardRequest.getWriter())
+                .writer(userInfoDto.getName())
                 .views(0L)
                 .isDeleted(false)
                 .build();
@@ -117,6 +121,7 @@ public class BoardService {
                 .comments(saved.getComments().stream().map(commentEntity ->
                         CommentResponse.builder()
                                 .commentId(commentEntity.getCommentId())
+                                .userId(commentEntity.getUserId())
                                 .boardId(commentEntity.getBoardId())
                                 .comment(commentEntity.getComment())
                                 .writer(commentEntity.getWriter())
@@ -143,16 +148,18 @@ public class BoardService {
 
     @Transactional
     // 게시글 수정
-    public BoardResponse updateBoard(Long boardId, BoardUpdateRequest boardRequest) {
+    public BoardResponse updateBoard(Long boardId, BoardUpdateRequest boardRequest, Authentication authentication) {
+        UserInfoDto userInfoDto = getUserInfoDto(authentication);
+
         BoardEntity boardEntity = getBoardEntityByID(boardId);
 
-        if (!boardEntity.getUserId().equals(boardRequest.getUserId())) {
+        if (!boardEntity.getUserId().equals(userInfoDto.getUserId())) {
             throw new BaseException(ErrorResult.BOARD_USERID_NOT_MATCH);
         }
 
         BoardEntity updatedBoardEntity = BoardEntity.builder()
                 .boardId(boardEntity.getBoardId())
-                .userId(boardRequest.getUserId())
+                .userId(userInfoDto.getUserId())
                 .title(boardRequest.getTitle())
                 .content(boardRequest.getContent())
                 .writer(boardEntity.getWriter())
@@ -179,10 +186,12 @@ public class BoardService {
 
     @Transactional
     // 게시글 삭제
-    public void deleteBoard(Long boardId, BoardDeleteRequest boardDeleteRequest) {
+    public void deleteBoard(Long boardId, Authentication authentication) {
+        UserInfoDto userInfoDto = getUserInfoDto(authentication);
+
         BoardEntity boardEntity = getBoardEntityByID(boardId);
 
-        if (!boardEntity.getUserId().equals(boardDeleteRequest.getUserId())) {
+        if (!boardEntity.getUserId().equals(userInfoDto.getUserId())) {
             throw new BaseException(ErrorResult.BOARD_USERID_NOT_MATCH);
         }
 
@@ -195,5 +204,21 @@ public class BoardService {
     // BoardEntity 가져오기
     private BoardEntity getBoardEntityByID(Long boardId) {
         return boardEntityRepository.findById(boardId).orElseThrow(() -> new BaseException(ErrorResult.BOARD_NOT_FOUND));
+    }
+
+    // 인증 정보로 유저 데이터 가져오기
+    private static UserInfoDto getUserInfoDto(Authentication authentication) {
+        CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+        return principal.getUserInfoDto();
+    }
+
+    // 유저 이름 변경으로 게시판 작성자 이름 변경
+    public void updateBoardUserName(UserRequest request, Authentication authentication) {
+        UserInfoDto userInfoDto = getUserInfoDto(authentication);
+        List<BoardEntity> boardEntities = boardEntityRepository.findByUserId(userInfoDto.getUserId());
+
+        for (BoardEntity boardEntity : boardEntities) {
+            boardEntity.updateWriter(request.getName());
+        }
     }
 }

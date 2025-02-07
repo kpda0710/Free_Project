@@ -12,4 +12,5 @@ import java.util.List;
 public interface BoardEntityRepository extends JpaRepository<BoardEntity, Long> {
 
     List<BoardEntity> findByTitle(String title);
+    List<BoardEntity> findByUserId(Long userId);
 }

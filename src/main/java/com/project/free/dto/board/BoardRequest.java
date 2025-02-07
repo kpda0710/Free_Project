@@ -10,11 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 public class BoardRequest {
 
-    private Long userId;
-
     private String title;
 
     private String content;
-
-    private String writer;
 }
