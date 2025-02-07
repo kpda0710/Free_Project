@@ -25,7 +25,7 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
 
     private static final String[] AUTH_WHITELIST = {
-        "/api/users/signup", "/api/users/login"
+        "/api/users/signup", "/api/users/login", "/h2-console/*"
     };
 
     @Bean
@@ -43,6 +43,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers(AUTH_WHITELIST).permitAll()
                         .anyRequest().authenticated())
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions.disable()))
                 .build();
     }
 }
