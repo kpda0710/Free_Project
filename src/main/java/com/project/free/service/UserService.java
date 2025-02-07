@@ -24,6 +24,9 @@ public class UserService {
     private final UserEntityRepository userEntityRepository;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
+    private final BoardService boardService;
+    private final CommentService commentService;
+    private final LikesService likesService;
 
     // 유저 가입
     @Transactional
@@ -108,6 +111,12 @@ public class UserService {
                 .build();
 
         UserEntity saved = userEntityRepository.save(updatedUserEntity);
+
+        // 게시글 이름 업데이트
+        boardService.updateBoardUserName(request, authentication);
+
+        // 댓글 이름 업데이트
+        commentService.updateCommentUserName(request, authentication);
 
         return UserResponse.builder()
                 .userId(saved.getUserId())
