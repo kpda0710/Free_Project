@@ -1,10 +1,11 @@
 package com.project.free.entity;
 
-import com.project.free.dto.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Where;
+
+import java.util.List;
 
 @Table(name = "comment")
 @Entity
@@ -25,10 +26,14 @@ public class CommentEntity extends BaseEntity {
     private Long boardId;
 
     @Column(nullable = false)
-    private String comment;
+    private String content;
 
     @Column(nullable = false)
     private String writer;
+
+    @ToString.Exclude
+    @OneToMany
+    private List<CommentEntity> reply;
 
     public void updateWriter(String writer) {
         this.writer = writer;

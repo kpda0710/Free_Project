@@ -1,6 +1,6 @@
 package com.project.free.service;
 
-import com.project.free.dto.comment.CommentDeleteRequest;
+import com.project.free.dto.comment.CommentReplyResponse;
 import com.project.free.dto.comment.CommentRequest;
 import com.project.free.dto.comment.CommentResponse;
 import com.project.free.dto.comment.CommentUpdateRequest;
@@ -13,7 +13,6 @@ import com.project.free.exception.BaseException;
 import com.project.free.exception.ErrorResult;
 import com.project.free.repository.BoardEntityRepository;
 import com.project.free.repository.CommentEntityRepository;
-import com.project.free.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,6 @@ public class CommentService {
 
     private final CommentEntityRepository commentEntityRepository;
     private final BoardEntityRepository boardEntityRepository;
-    private final UserEntityRepository userEntityRepository;
 
     @Transactional
     // 댓글 생성
@@ -40,7 +38,7 @@ public class CommentService {
         CommentEntity commentEntity = CommentEntity.builder()
                 .userId(userInfoDto.getUserId())
                 .boardId(commentRequest.getBoardId())
-                .comment(commentRequest.getComment())
+                .content(commentRequest.getContent())
                 .writer(userInfoDto.getName())
                 .isDeleted(false)
                 .build();
@@ -55,7 +53,7 @@ public class CommentService {
                 .commentId(commentEntity.getCommentId())
                 .userId(commentEntity.getUserId())
                 .boardId(commentEntity.getBoardId())
-                .comment(commentEntity.getComment())
+                .content(commentEntity.getContent())
                 .writer(commentEntity.getWriter())
                 .createdAt(commentEntity.getCreatedAt())
                 .updatedAt(commentEntity.getUpdatedAt())
@@ -71,7 +69,7 @@ public class CommentService {
                 .commentId(commentEntity.getCommentId())
                 .boardId(commentEntity.getBoardId())
                 .userId(commentEntity.getUserId())
-                .comment(commentUpdateRequest.getComment())
+                .content(commentUpdateRequest.getContent())
                 .writer(commentEntity.getWriter())
                 .createdAt(commentEntity.getCreatedAt())
                 .updatedAt(LocalDateTime.now())
@@ -84,7 +82,7 @@ public class CommentService {
                 .commentId(saved.getCommentId())
                 .boardId(saved.getBoardId())
                 .userId(saved.getUserId())
-                .comment(saved.getComment())
+                .content(saved.getContent())
                 .writer(saved.getWriter())
                 .createdAt(saved.getCreatedAt())
                 .updatedAt(saved.getUpdatedAt())
@@ -97,14 +95,42 @@ public class CommentService {
         CommentEntity commentEntity = getCommentEntity(commentId);
         BoardEntity boardEntity = boardEntityRepository.findById(commentEntity.getBoardId()).orElseThrow(() -> new BaseException(ErrorResult.BOARD_NOT_FOUND));
 
-        commentEntity.setIsDeleted(true);
-        commentEntity.setDeletedAt(LocalDateTime.now());
+        commentEntity.deleteSetting();
 
         List<CommentEntity> boardEntityComments = boardEntity.getComments();
         boardEntityComments.remove(commentEntity);
 
         commentEntityRepository.save(commentEntity);
         boardEntityRepository.save(boardEntity);
+    }
+
+    @Transactional
+    public CommentReplyResponse createReply(Long commentId, CommentRequest commentRequest, Authentication authentication) {
+        UserInfoDto userInfoDto = getUserInfoDto(authentication);
+        CommentEntity reply = commentEntityRepository.findById(commentId).orElseThrow(() -> new BaseException(ErrorResult.COMMENT_NOT_FOUND));
+
+        CommentEntity commentEntity = CommentEntity.builder()
+                .userId(userInfoDto.getUserId())
+                .boardId(commentRequest.getBoardId())
+                .content(commentRequest.getContent())
+                .writer(userInfoDto.getName())
+                .isDeleted(false)
+                .build();
+
+        CommentEntity saved = commentEntityRepository.save(commentEntity);
+
+        reply.getReply().add(commentEntity);
+        commentEntityRepository.save(reply);
+
+        return CommentReplyResponse.builder()
+                .commentId(saved.getCommentId())
+                .userId(saved.getUserId())
+                .boardId(saved.getBoardId())
+                .content(saved.getContent())
+                .writer(saved.getWriter())
+                .createdAt(saved.getCreatedAt())
+                .updatedAt(saved.getUpdatedAt())
+                .build();
     }
 
     // CommentEntity 가져오기

@@ -1,9 +1,6 @@
 package com.project.free.controller;
 
-import com.project.free.dto.comment.CommentDeleteRequest;
-import com.project.free.dto.comment.CommentRequest;
-import com.project.free.dto.comment.CommentResponse;
-import com.project.free.dto.comment.CommentUpdateRequest;
+import com.project.free.dto.comment.*;
 import com.project.free.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,5 +31,11 @@ public class CommentApiController {
     public ResponseEntity<Void> deleteComment(@PathVariable(name = "commentId") Long commentId, Authentication authentication) {
         commentService.deleteComment(commentId);
         return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @PostMapping("/{commentId}")
+    public ResponseEntity<CommentReplyResponse> replyComment(@PathVariable(name = "commentId") Long commentId, @RequestBody CommentRequest commentRequest, Authentication authentication) {
+        CommentReplyResponse reply = commentService.createReply(commentId, commentRequest, authentication);
+        return ResponseEntity.status(HttpStatus.OK).body(reply);
     }
 }
