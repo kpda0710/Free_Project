@@ -1,6 +1,7 @@
 package com.project.free.service;
 
 import com.project.free.dto.board.*;
+import com.project.free.dto.comment.CommentReplyResponse;
 import com.project.free.dto.comment.CommentResponse;
 import com.project.free.dto.like.LikesResponse;
 import com.project.free.dto.user.CustomUserDetails;
@@ -95,19 +96,7 @@ public class BoardService {
     public BoardDetailResponse getBoardByID(Long boardId) {
         BoardEntity boardEntity = getBoardEntityByID(boardId);
 
-        boardEntity = BoardEntity.builder()
-                .boardId(boardEntity.getBoardId())
-                .userId(boardEntity.getUserId())
-                .title(boardEntity.getTitle())
-                .content(boardEntity.getContent())
-                .writer(boardEntity.getWriter())
-                .views(boardEntity.getViews() + 1)
-                .comments(boardEntity.getComments())
-                .likes(boardEntity.getLikes())
-                .createdAt(boardEntity.getCreatedAt())
-                .updatedAt(boardEntity.getUpdatedAt())
-                .isDeleted(boardEntity.getIsDeleted())
-                .build();
+        boardEntity.viewPlus();
 
         BoardEntity saved = boardEntityRepository.save(boardEntity);
 
@@ -123,8 +112,19 @@ public class BoardService {
                                 .commentId(commentEntity.getCommentId())
                                 .userId(commentEntity.getUserId())
                                 .boardId(commentEntity.getBoardId())
-                                .comment(commentEntity.getComment())
+                                .content(commentEntity.getContent())
                                 .writer(commentEntity.getWriter())
+                                .reply(commentEntity.getReply().stream().map(entity -> CommentReplyResponse
+                                        .builder()
+                                        .commentId(entity.getCommentId())
+                                        .userId(entity.getUserId())
+                                        .boardId(entity.getBoardId())
+                                        .content(entity.getContent())
+                                        .writer(entity.getWriter())
+                                        .createdAt(entity.getCreatedAt())
+                                        .updatedAt(entity.getUpdatedAt())
+                                        .build())
+                                        .collect(Collectors.toList()))
                                 .createdAt(commentEntity.getCreatedAt())
                                 .updatedAt(commentEntity.getUpdatedAt())
                                 .build()).collect(Collectors.toList()))
@@ -195,8 +195,7 @@ public class BoardService {
             throw new BaseException(ErrorResult.BOARD_USERID_NOT_MATCH);
         }
 
-        boardEntity.setIsDeleted(true);
-        boardEntity.setDeletedAt(LocalDateTime.now());
+        boardEntity.deleteSetting();
 
         boardEntityRepository.save(boardEntity);
     }
