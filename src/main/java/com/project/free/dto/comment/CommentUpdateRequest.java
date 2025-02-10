@@ -12,5 +12,5 @@ public class CommentUpdateRequest {
 
     private Long boardId;
 
-    private String comment;
+    private String content;
 }

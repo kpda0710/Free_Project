@@ -9,13 +9,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,7 +45,7 @@ class CommentServiceTest {
         CommentResponse result = commentService.createComment(commentRequest);
 
         assertThat(result.getBoardId()).isEqualTo(commentEntity.getBoardId());
-        assertThat(result.getComment()).isEqualTo(commentEntity.getComment());
+        assertThat(result.getComment()).isEqualTo(commentEntity.getContent());
         assertThat(result.getWriter()).isEqualTo(commentEntity.getWriter());
     }
 
@@ -61,7 +59,7 @@ class CommentServiceTest {
                 .build();
 
         CommentUpdateRequest commentRequest = CommentUpdateRequest.builder()
-                .comment("comment@@")
+                .content("comment@@")
                 .build();
 
         when(commentEntityRepository.findById(1L)).thenReturn(Optional.ofNullable(commentEntity));
@@ -69,7 +67,7 @@ class CommentServiceTest {
 
         CommentResponse result = commentService.updateComment(1L, commentRequest);
 
-        assertThat(result.getComment()).isEqualTo(commentRequest.getComment());
+        assertThat(result.getComment()).isEqualTo(commentRequest.getContent());
     }
 
     @Test

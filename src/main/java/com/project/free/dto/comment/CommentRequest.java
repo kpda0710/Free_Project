@@ -12,7 +12,7 @@ public class CommentRequest {
 
     private Long boardId;
 
-    private String comment;
+    private String content;
 
     private String writer;
 }

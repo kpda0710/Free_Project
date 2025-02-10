@@ -3,6 +3,7 @@ package com.project.free.dto.comment;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,11 +19,13 @@ public class CommentResponse {
 
     private Long boardId;
 
-    private String comment;
+    private String content;
 
     private String writer;
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    private List<CommentReplyResponse> reply;
 }
