@@ -17,15 +17,15 @@ public class LikesApiController {
 
     private final LikesService likesService;
 
-    @PostMapping
-    public ResponseEntity<LikesResponse> createLikes(@RequestBody LikesRequest likesRequest, Authentication authentication) {
-        LikesResponse likesResponse = likesService.createLikes(likesRequest, authentication);
+    @PostMapping("{boardId}")
+    public ResponseEntity<LikesResponse> createLikes(@PathVariable(name = "boardId") Long boardId, Authentication authentication) {
+        LikesResponse likesResponse = likesService.createLikes(boardId, authentication);
         return ResponseEntity.status(HttpStatus.OK).body(likesResponse);
     }
 
-    @DeleteMapping()
-    public ResponseEntity<Void> deleteLikes(@RequestBody LikesDeleteRequest likesDeleteRequest, Authentication authentication) {
-        likesService.deleteLikes(likesDeleteRequest, authentication);
+    @DeleteMapping("{boardId}")
+    public ResponseEntity<Void> deleteLikes(@PathVariable(name = "boardId") Long boardId, Authentication authentication) {
+        likesService.deleteLikes(boardId, authentication);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }
