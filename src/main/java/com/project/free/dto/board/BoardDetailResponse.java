@@ -1,6 +1,7 @@
 package com.project.free.dto.board;
 
 import com.project.free.dto.comment.CommentResponse;
+import com.project.free.dto.image.photoResponse;
 import com.project.free.dto.like.LikesResponse;
 import lombok.*;
 
@@ -30,6 +31,8 @@ public class BoardDetailResponse {
     private List<CommentResponse> comments;
 
     private List<LikesResponse> likes;
+
+    private List<photoResponse> photo;
 
     private LocalDateTime createdAt;
 

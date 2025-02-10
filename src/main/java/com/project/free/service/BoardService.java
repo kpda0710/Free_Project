@@ -3,6 +3,7 @@ package com.project.free.service;
 import com.project.free.dto.board.*;
 import com.project.free.dto.comment.CommentReplyResponse;
 import com.project.free.dto.comment.CommentResponse;
+import com.project.free.dto.image.photoResponse;
 import com.project.free.dto.like.LikesResponse;
 import com.project.free.dto.user.CustomUserDetails;
 import com.project.free.dto.user.UserInfoDto;
@@ -11,7 +12,6 @@ import com.project.free.entity.BoardEntity;
 import com.project.free.exception.BaseException;
 import com.project.free.exception.ErrorResult;
 import com.project.free.repository.BoardEntityRepository;
-import com.project.free.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 public class BoardService {
 
     private final BoardEntityRepository boardEntityRepository;
-    private final UserEntityRepository userEntityRepository;
 
     @Transactional
     // 게시글 생성
@@ -133,6 +132,12 @@ public class BoardService {
                                 .likesId(likesEntity.getLikesId())
                                 .boardId(likesEntity.getBoardId())
                                 .userId(likesEntity.getUserId())
+                                .build()).collect(Collectors.toList()))
+                .photo(saved.getPhotos().stream().map(imageEntity ->
+                        photoResponse.builder()
+                                .photoId(imageEntity.getPhotoId())
+                                .boardId(imageEntity.getBoardId())
+                                .imagePath(imageEntity.getPhotoPath())
                                 .build()).collect(Collectors.toList()))
                 .createdAt(saved.getCreatedAt())
                 .updatedAt(saved.getUpdatedAt())

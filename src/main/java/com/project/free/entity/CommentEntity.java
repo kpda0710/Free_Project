@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Where;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "comment")
@@ -33,7 +34,7 @@ public class CommentEntity extends BaseEntity {
 
     @ToString.Exclude
     @OneToMany
-    private List<CommentEntity> reply;
+    private List<CommentEntity> reply = new ArrayList<>();
 
     public void updateWriter(String writer) {
         this.writer = writer;

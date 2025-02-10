@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Where;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "board")
@@ -23,25 +24,25 @@ public class BoardEntity extends BaseEntity {
 
     private Long userId;
 
-    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
     private String writer;
 
-    @Column(nullable = false)
     private Long views;
 
     @ToString.Exclude
     @OneToMany
-    private List<CommentEntity> comments;
+    private List<CommentEntity> comments = new ArrayList<>();
 
     @ToString.Exclude
     @OneToMany
-    private List<LikesEntity> likes;
+    private List<LikesEntity> likes = new ArrayList<>();
+
+    @ToString.Exclude
+    @OneToMany
+    private List<PhotoEntity> photos = new ArrayList<>();
 
     public void updateWriter(String writer) {
         this.writer = writer;
@@ -49,5 +50,9 @@ public class BoardEntity extends BaseEntity {
 
     public void viewPlus() {
         this.views++;
+    }
+
+    public void uploadImage(PhotoEntity photoEntity) {
+        this.photos.add(photoEntity);
     }
 }
