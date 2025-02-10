@@ -91,8 +91,7 @@ public class LikesService {
         }
 
         boardEntity.getLikes().remove(likesEntity);
-        likesEntity.setIsDeleted(true);
-        likesEntity.setDeletedAt(LocalDateTime.now());
+        likesEntity.deleteSetting();
 
         boardEntityRepository.save(boardEntity);
         likesEntityRepository.save(likesEntity);

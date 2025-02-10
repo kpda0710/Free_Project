@@ -136,8 +136,7 @@ public class UserService {
 
         UserEntity userEntity = getUserEntity(principal.getUserInfoDto().getUserId());
 
-        userEntity.setIsDeleted(true);
-        userEntity.setDeletedAt(LocalDateTime.now());
+        userEntity.deleteSetting();
         userEntityRepository.save(userEntity);
     }
 
