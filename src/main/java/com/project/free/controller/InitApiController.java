@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ public class InitApiController {
 
     private final UserEntityRepository userEntityRepository;
     private final BoardEntityRepository boardEntityRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping()
@@ -29,7 +31,7 @@ public class InitApiController {
         for (int i = 0; i < 5; i++) {
             UserEntity userEntity = UserEntity.builder()
                     .name("Jung" + i)
-                    .password("1234")
+                    .password(passwordEncoder.encode("password" + i))
                     .email("jung" + i + "@gmail.com")
                     .status(UserStatus.USER)
                     .isDeleted(false)

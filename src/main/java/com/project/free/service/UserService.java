@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -26,7 +28,6 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final BoardService boardService;
     private final CommentService commentService;
-    private final LikesService likesService;
 
     // 유저 가입
     @Transactional
@@ -138,6 +139,21 @@ public class UserService {
 
         userEntity.deleteSetting();
         userEntityRepository.save(userEntity);
+    }
+
+    public List<UserResponse> getUserAll(Authentication authentication) {
+        List<UserEntity> userEntityList = userEntityRepository.findAll();
+
+        return userEntityList.stream().map(userEntity ->
+                UserResponse.builder()
+                        .userId(userEntity.getUserId())
+                        .name(userEntity.getName())
+                        .password(userEntity.getPassword())
+                        .email(userEntity.getEmail())
+                        .status(userEntity.getStatus())
+                        .createdAt(userEntity.getCreatedAt())
+                        .updatedAt(userEntity.getUpdatedAt())
+                        .build()).collect(Collectors.toList());
     }
 
     // UserEntity 가져오기

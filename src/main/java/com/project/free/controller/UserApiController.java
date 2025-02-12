@@ -6,8 +6,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -45,5 +48,12 @@ public class UserApiController {
     public ResponseEntity<Void> deleteUser(Authentication authentication) {
         userService.deleteUser(authentication);
         return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/all")
+    public ResponseEntity<List<UserResponse>> getAllUsers(Authentication authentication) {
+        List<UserResponse> userResponseList = userService.getUserAll(authentication);
+        return ResponseEntity.status(HttpStatus.OK).body(userResponseList);
     }
 }
