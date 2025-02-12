@@ -19,7 +19,7 @@ public class BaseException extends RuntimeException {
         super(errorResult.getMessage());
         this.code = errorResult.getCode();
         this.message = errorResult.getMessage();
-        this.extraMessage = "";
+        this.extraMessage = "Null";
     }
 
     public BaseException(ErrorResult errorResult, String extraMessage) {
