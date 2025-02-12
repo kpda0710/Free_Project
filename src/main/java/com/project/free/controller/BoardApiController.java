@@ -3,11 +3,13 @@ package com.project.free.controller;
 import com.project.free.dto.board.*;
 import com.project.free.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 @RestController
@@ -24,14 +26,14 @@ public class BoardApiController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<BoardResponse>> getAllBoards(Authentication authentication) {
-        List<BoardResponse> boardResponseList = boardService.getAllBoards();
+    public ResponseEntity<Page<BoardResponse>> getAllBoards(@RequestParam(name = "page", defaultValue = "0") int page, Authentication authentication) {
+        Page<BoardResponse> boardResponseList = boardService.getAllBoards(page);
         return ResponseEntity.status(HttpStatus.OK).body(boardResponseList);
     }
 
     @GetMapping("/title")
-    public ResponseEntity<List<BoardResponse>> getBoardsByTitle(@RequestParam("title") String title, Authentication authentication) {
-        List<BoardResponse> boardResponseList = boardService.getBoardsByTitle(title);
+    public ResponseEntity<Page<BoardResponse>> getBoardsByTitle(@RequestParam("title") String title, @RequestParam(name = "page", defaultValue = "0") int page, Authentication authentication) {
+        Page<BoardResponse> boardResponseList = boardService.getBoardsByTitle(title, page);
         return ResponseEntity.status(HttpStatus.OK).body(boardResponseList);
     }
 

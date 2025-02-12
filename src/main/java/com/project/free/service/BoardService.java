@@ -13,11 +13,13 @@ import com.project.free.exception.BaseException;
 import com.project.free.exception.ErrorResult;
 import com.project.free.repository.BoardEntityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,10 +58,13 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     // 게시글 전체 검색
-    public List<BoardResponse> getAllBoards() {
-        List<BoardEntity> boardEntityList = boardEntityRepository.findAll();
+    public Page<BoardResponse> getAllBoards(int pageNumber) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.asc("createdAt"));
+        Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(sorts));
+        Page<BoardEntity> boardEntities = boardEntityRepository.findAll(pageable);
 
-        return boardEntityList.stream().map(boardEntity ->
+        List<BoardResponse> boardResponses = boardEntities.stream().map(boardEntity ->
                 BoardResponse.builder()
                         .boardId(boardEntity.getBoardId())
                         .userId(boardEntity.getUserId())
@@ -68,16 +73,20 @@ public class BoardService {
                         .writer(boardEntity.getWriter())
                         .createdAt(boardEntity.getCreatedAt())
                         .updatedAt(boardEntity.getUpdatedAt())
-                        .build())
-                .collect(Collectors.toList());
+                        .build()).collect(Collectors.toList());
+
+        return new PageImpl<>(boardResponses, pageable, boardEntities.getTotalElements());
     }
 
     @Transactional(readOnly = true)
     // 제목으로 게시글 검색
-    public List<BoardResponse> getBoardsByTitle(String title) {
-        List<BoardEntity> boardEntityList = boardEntityRepository.findByTitle(title);
+    public Page<BoardResponse> getBoardsByTitle(String title, int pageNumber) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.asc("createdAt"));
+        Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(sorts));
+        Page<BoardEntity> boardEntityList = boardEntityRepository.findAllByTitleContaining(title, pageable);
 
-        return boardEntityList.stream().map(boardEntity ->
+        List<BoardResponse> boardResponses = boardEntityList.stream().map(boardEntity ->
                         BoardResponse.builder()
                                 .boardId(boardEntity.getBoardId())
                                 .userId(boardEntity.getUserId())
@@ -86,8 +95,9 @@ public class BoardService {
                                 .writer(boardEntity.getWriter())
                                 .createdAt(boardEntity.getCreatedAt())
                                 .updatedAt(boardEntity.getUpdatedAt())
-                                .build())
-                .collect(Collectors.toList());
+                                .build()).collect(Collectors.toList());
+
+        return new PageImpl<>(boardResponses, pageable, boardEntityList.getTotalElements());
     }
 
     @Transactional(readOnly = true)
