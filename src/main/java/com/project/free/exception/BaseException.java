@@ -15,17 +15,17 @@ public class BaseException extends RuntimeException {
 
     private String extraMessage;
 
-    public BaseException(ErrorResult errorResult) {
-        super(errorResult.getMessage());
-        this.code = errorResult.getCode();
-        this.message = errorResult.getMessage();
+    public BaseException(ResponseCode responseCode) {
+        super(responseCode.getMessage());
+        this.code = responseCode.getCode();
+        this.message = responseCode.getMessage();
         this.extraMessage = "Null";
     }
 
-    public BaseException(ErrorResult errorResult, String extraMessage) {
-        super(errorResult.getMessage() + " - " + extraMessage);
-        this.code = errorResult.getCode();
-        this.message = errorResult.getMessage();
+    public BaseException(ResponseCode responseCode, String extraMessage) {
+        super(responseCode.getMessage() + " - " + extraMessage);
+        this.code = responseCode.getCode();
+        this.message = responseCode.getMessage();
         this.extraMessage = extraMessage;
     }
 }
