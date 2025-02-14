@@ -25,7 +25,7 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
 
     private static final String[] AUTH_WHITELIST = {
-        "/api/users/signup", "/api/users/login", "/h2-console/*"
+        "/api/users/signup", "/api/users/login"
     };
 
     @Bean
