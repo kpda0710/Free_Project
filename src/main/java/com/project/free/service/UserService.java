@@ -4,7 +4,7 @@ import com.project.free.dto.user.*;
 import com.project.free.entity.UserEntity;
 import com.project.free.entity.UserStatus;
 import com.project.free.exception.BaseException;
-import com.project.free.exception.ErrorResult;
+import com.project.free.exception.ResponseCode;
 import com.project.free.repository.UserEntityRepository;
 import com.project.free.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -58,10 +58,10 @@ public class UserService {
     public String loginUser(UserLoginRequest userLoginRequest) {
         String email = userLoginRequest.getEmail();
         String password = userLoginRequest.getPassword();
-        UserEntity userEntity = userEntityRepository.findByEmail(email).orElseThrow(() -> new BaseException(ErrorResult.USER_NOT_FOUND));
+        UserEntity userEntity = userEntityRepository.findByEmail(email).orElseThrow(() -> new BaseException(ResponseCode.USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(password, userEntity.getPassword())) {
-            throw new BaseException(ErrorResult.USER_NOT_MATCH_PASSWORD);
+            throw new BaseException(ResponseCode.USER_NOT_PASSWORD);
         }
 
         UserInfoDto userInfoDto = UserInfoDto.builder()
@@ -158,6 +158,6 @@ public class UserService {
 
     // UserEntity 가져오기
     private UserEntity getUserEntity(Long userId) {
-        return userEntityRepository.findById(userId).orElseThrow(() -> new BaseException(ErrorResult.USER_NOT_FOUND));
+        return userEntityRepository.findById(userId).orElseThrow(() -> new BaseException(ResponseCode.USER_NOT_FOUND));
     }
 }

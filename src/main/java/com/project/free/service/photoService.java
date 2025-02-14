@@ -4,7 +4,7 @@ import com.project.free.dto.image.photoResponse;
 import com.project.free.entity.BoardEntity;
 import com.project.free.entity.PhotoEntity;
 import com.project.free.exception.BaseException;
-import com.project.free.exception.ErrorResult;
+import com.project.free.exception.ResponseCode;
 import com.project.free.repository.BoardEntityRepository;
 import com.project.free.repository.photoEntityRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -44,7 +43,7 @@ public class photoService {
                         .isDeleted(false)
                         .build();
 
-                BoardEntity boardEntity = boardEntityRepository.findById(boardId).orElseThrow(() -> new BaseException(ErrorResult.BOARD_NOT_FOUND));
+                BoardEntity boardEntity = boardEntityRepository.findById(boardId).orElseThrow(() -> new BaseException(ResponseCode.BOARD_NOT_FOUND));
                 PhotoEntity saved = photoEntityRepository.save(photoEntity);
                 boardEntity.uploadImage(saved);
                 imageEntities.add(saved);
@@ -58,7 +57,7 @@ public class photoService {
                     .build()).collect(Collectors.toList());
 
         } catch (IOException e) {
-            throw new BaseException(ErrorResult.FILE_SAVE_ERROR);
+            throw new BaseException(ResponseCode.FILE_SAVE_ERROR);
         }
 
     }

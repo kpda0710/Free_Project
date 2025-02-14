@@ -10,7 +10,7 @@ import com.project.free.dto.user.UserRequest;
 import com.project.free.entity.BoardEntity;
 import com.project.free.entity.CommentEntity;
 import com.project.free.exception.BaseException;
-import com.project.free.exception.ErrorResult;
+import com.project.free.exception.ResponseCode;
 import com.project.free.repository.BoardEntityRepository;
 import com.project.free.repository.CommentEntityRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class CommentService {
     public CommentResponse createComment(CommentRequest commentRequest, Authentication authentication) throws BaseException {
         UserInfoDto userInfoDto = getUserInfoDto(authentication);
 
-        BoardEntity boardEntity = boardEntityRepository.findById(commentRequest.getBoardId()).orElseThrow(() -> new BaseException(ErrorResult.BOARD_NOT_FOUND));
+        BoardEntity boardEntity = boardEntityRepository.findById(commentRequest.getBoardId()).orElseThrow(() -> new BaseException(ResponseCode.BOARD_NOT_FOUND));
 
         CommentEntity commentEntity = CommentEntity.builder()
                 .userId(userInfoDto.getUserId())
@@ -93,7 +93,7 @@ public class CommentService {
     // 댓글 삭제
     public void deleteComment(Long commentId) {
         CommentEntity commentEntity = getCommentEntity(commentId);
-        BoardEntity boardEntity = boardEntityRepository.findById(commentEntity.getBoardId()).orElseThrow(() -> new BaseException(ErrorResult.BOARD_NOT_FOUND));
+        BoardEntity boardEntity = boardEntityRepository.findById(commentEntity.getBoardId()).orElseThrow(() -> new BaseException(ResponseCode.BOARD_NOT_FOUND));
 
         commentEntity.deleteSetting();
 
@@ -107,7 +107,7 @@ public class CommentService {
     @Transactional
     public CommentReplyResponse createReply(Long commentId, CommentRequest commentRequest, Authentication authentication) {
         UserInfoDto userInfoDto = getUserInfoDto(authentication);
-        CommentEntity reply = commentEntityRepository.findById(commentId).orElseThrow(() -> new BaseException(ErrorResult.COMMENT_NOT_FOUND));
+        CommentEntity reply = commentEntityRepository.findById(commentId).orElseThrow(() -> new BaseException(ResponseCode.COMMENT_NOT_FOUND));
 
         CommentEntity commentEntity = CommentEntity.builder()
                 .userId(userInfoDto.getUserId())
@@ -135,7 +135,7 @@ public class CommentService {
 
     // CommentEntity 가져오기
     private CommentEntity getCommentEntity(Long commentId) {
-        return commentEntityRepository.findById(commentId).orElseThrow(() -> new BaseException(ErrorResult.COMMENT_NOT_FOUND));
+        return commentEntityRepository.findById(commentId).orElseThrow(() -> new BaseException(ResponseCode.COMMENT_NOT_FOUND));
     }
 
     // 인증 정보로 유저 데이터 가져오기

@@ -10,7 +10,7 @@ import com.project.free.dto.user.UserInfoDto;
 import com.project.free.dto.user.UserRequest;
 import com.project.free.entity.BoardEntity;
 import com.project.free.exception.BaseException;
-import com.project.free.exception.ErrorResult;
+import com.project.free.exception.ResponseCode;
 import com.project.free.repository.BoardEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -169,7 +169,7 @@ public class BoardService {
         BoardEntity boardEntity = getBoardEntityByID(boardId);
 
         if (!boardEntity.getUserId().equals(userInfoDto.getUserId())) {
-            throw new BaseException(ErrorResult.BOARD_USERID_NOT_MATCH);
+            throw new BaseException(ResponseCode.BOARD_USERID_NOT_MATCH);
         }
 
         BoardEntity updatedBoardEntity = BoardEntity.builder()
@@ -207,7 +207,7 @@ public class BoardService {
         BoardEntity boardEntity = getBoardEntityByID(boardId);
 
         if (!boardEntity.getUserId().equals(userInfoDto.getUserId())) {
-            throw new BaseException(ErrorResult.BOARD_USERID_NOT_MATCH);
+            throw new BaseException(ResponseCode.BOARD_USERID_NOT_MATCH);
         }
 
         boardEntity.deleteSetting();
@@ -217,7 +217,7 @@ public class BoardService {
 
     // BoardEntity 가져오기
     private BoardEntity getBoardEntityByID(Long boardId) {
-        return boardEntityRepository.findById(boardId).orElseThrow(() -> new BaseException(ErrorResult.BOARD_NOT_FOUND));
+        return boardEntityRepository.findById(boardId).orElseThrow(() -> new BaseException(ResponseCode.BOARD_NOT_FOUND));
     }
 
     // 인증 정보로 유저 데이터 가져오기
