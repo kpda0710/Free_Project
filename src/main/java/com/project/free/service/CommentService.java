@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -71,6 +72,7 @@ public class CommentService {
                 .userId(commentEntity.getUserId())
                 .content(commentUpdateRequest.getContent())
                 .writer(commentEntity.getWriter())
+                .reply(commentEntity.getReply())
                 .createdAt(commentEntity.getCreatedAt())
                 .updatedAt(LocalDateTime.now())
                 .isDeleted(commentEntity.getIsDeleted())
@@ -84,6 +86,16 @@ public class CommentService {
                 .userId(saved.getUserId())
                 .content(saved.getContent())
                 .writer(saved.getWriter())
+                .reply(saved.getReply().stream().map(reply ->
+                        CommentReplyResponse.builder()
+                                .commentId(reply.getCommentId())
+                                .userId(reply.getUserId())
+                                .boardId(reply.getBoardId())
+                                .content(reply.getContent())
+                                .writer(reply.getWriter())
+                                .createdAt(reply.getCreatedAt())
+                                .updatedAt(reply.getUpdatedAt())
+                                .build()).collect(Collectors.toList()))
                 .createdAt(saved.getCreatedAt())
                 .updatedAt(saved.getUpdatedAt())
                 .build();
