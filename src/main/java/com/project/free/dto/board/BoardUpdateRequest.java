@@ -1,5 +1,6 @@
 package com.project.free.dto.board;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
@@ -10,7 +11,9 @@ import lombok.*;
 @NoArgsConstructor
 public class BoardUpdateRequest {
 
+    @NotBlank
     private String title;
 
+    @NotBlank
     private String content;
 }

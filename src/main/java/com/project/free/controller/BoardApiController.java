@@ -4,6 +4,7 @@ import com.project.free.dto.board.*;
 import com.project.free.exception.ResponseCode;
 import com.project.free.service.BoardService;
 import com.project.free.util.CustomResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
@@ -17,7 +18,7 @@ public class BoardApiController {
     private final BoardService boardService;
 
     @PostMapping()
-    public CustomResponse<BoardResponse> createBoard(@RequestBody BoardRequest boardRequest, Authentication authentication) {
+    public CustomResponse<BoardResponse> createBoard(@RequestBody @Valid BoardRequest boardRequest, Authentication authentication) {
         BoardResponse boardResponse = boardService.createBoard(boardRequest, authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, boardResponse);
     }
@@ -47,7 +48,7 @@ public class BoardApiController {
     }
 
     @PutMapping("/{boardId}")
-    public CustomResponse<BoardResponse> updateBoard(@PathVariable(name = "boardId") Long boardId, @RequestBody BoardUpdateRequest boardRequest, Authentication authentication) {
+    public CustomResponse<BoardResponse> updateBoard(@PathVariable(name = "boardId") Long boardId, @RequestBody @Valid BoardUpdateRequest boardRequest, Authentication authentication) {
         BoardResponse boardResponse = boardService.updateBoard(boardId, boardRequest, authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, boardResponse);
     }
