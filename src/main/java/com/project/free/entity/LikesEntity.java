@@ -20,9 +20,9 @@ public class LikesEntity extends BaseEntity {
     @Column(nullable = false, updatable = false, unique = true)
     private Long likesId;
 
-    @Column(nullable = false, updatable = false, unique = true)
+    @Column(nullable = false, updatable = false)
     private Long boardId;
 
-    @Column(nullable = false, updatable = false, unique = true)
+    @Column(nullable = false, updatable = false)
     private Long userId;
 }

@@ -20,7 +20,7 @@ public class PhotoEntity extends BaseEntity {
     @Column(nullable = false, updatable = false, unique = true)
     private Long photoId;
 
-    @Column(nullable = false, updatable = false, unique = true)
+    @Column(nullable = false, updatable = false)
     private Long boardId;
 
     @Column(nullable = false)

@@ -23,10 +23,10 @@ public class CommentEntity extends BaseEntity {
     @Column(nullable = false, updatable = false, unique = true)
     private Long commentId;
 
-    @Column(nullable = false, updatable = false, unique = true)
+    @Column(nullable = false, updatable = false)
     private Long userId;
 
-    @Column(nullable = false, updatable = false, unique = true)
+    @Column(nullable = false, updatable = false)
     private Long boardId;
 
     @Column(nullable = false)
