@@ -4,6 +4,7 @@ import com.project.free.dto.user.*;
 import com.project.free.exception.ResponseCode;
 import com.project.free.service.UserService;
 import com.project.free.util.CustomResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,13 +22,13 @@ public class UserApiController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public CustomResponse<UserResponse> signupUser(@RequestBody UserRequest userRequest) {
+    public CustomResponse<UserResponse> signupUser(@RequestBody @Valid UserRequest userRequest) {
         UserResponse userResponse = userService.signupUser(userRequest);
         return CustomResponse.success(ResponseCode.SUCCESS, userResponse);
     }
 
     @PostMapping("/login")
-    public CustomResponse<String> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
+    public CustomResponse<String> loginUser(@RequestBody @Valid UserLoginRequest userLoginRequest) {
         String token = userService.loginUser(userLoginRequest);
         return CustomResponse.success(ResponseCode.SUCCESS, token);
     }
@@ -39,7 +40,7 @@ public class UserApiController {
     }
 
     @PutMapping()
-    public CustomResponse<UserResponse> updateUser(@RequestBody UserRequest userRequest, Authentication authentication) {
+    public CustomResponse<UserResponse> updateUser(@RequestBody @Valid UserRequest userRequest, Authentication authentication) {
         UserResponse userResponse = userService.updateUser(userRequest, authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, userResponse);
     }
