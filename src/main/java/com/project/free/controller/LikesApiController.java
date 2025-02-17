@@ -1,12 +1,10 @@
 package com.project.free.controller;
 
-import com.project.free.dto.like.LikesDeleteRequest;
-import com.project.free.dto.like.LikesRequest;
 import com.project.free.dto.like.LikesResponse;
+import com.project.free.exception.ResponseCode;
 import com.project.free.service.LikesService;
+import com.project.free.util.CustomResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,14 +16,14 @@ public class LikesApiController {
     private final LikesService likesService;
 
     @PostMapping("{boardId}")
-    public ResponseEntity<LikesResponse> createLikes(@PathVariable(name = "boardId") Long boardId, Authentication authentication) {
+    public CustomResponse<LikesResponse> createLikes(@PathVariable(name = "boardId") Long boardId, Authentication authentication) {
         LikesResponse likesResponse = likesService.createLikes(boardId, authentication);
-        return ResponseEntity.status(HttpStatus.OK).body(likesResponse);
+        return CustomResponse.success(ResponseCode.SUCCESS, likesResponse);
     }
 
     @DeleteMapping("{boardId}")
-    public ResponseEntity<Void> deleteLikes(@PathVariable(name = "boardId") Long boardId, Authentication authentication) {
+    public CustomResponse<Void> deleteLikes(@PathVariable(name = "boardId") Long boardId, Authentication authentication) {
         likesService.deleteLikes(boardId, authentication);
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return CustomResponse.success(ResponseCode.SUCCESS, null);
     }
 }

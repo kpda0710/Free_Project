@@ -1,14 +1,13 @@
 package com.project.free.controller;
 
-import com.project.free.entity.BaseEntity;
 import com.project.free.entity.BoardEntity;
 import com.project.free.entity.UserEntity;
 import com.project.free.entity.UserStatus;
+import com.project.free.exception.ResponseCode;
 import com.project.free.repository.BoardEntityRepository;
 import com.project.free.repository.UserEntityRepository;
+import com.project.free.util.CustomResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,7 +26,7 @@ public class InitApiController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping()
-    public ResponseEntity<Void> initData(Authentication authentication) {
+    public CustomResponse<Void> initData(Authentication authentication) {
         for (int i = 0; i < 5; i++) {
             UserEntity userEntity = UserEntity.builder()
                     .name("Jung" + i)
@@ -52,6 +51,6 @@ public class InitApiController {
                 boardEntityRepository.save(boardEntity);
             }
         }
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        return CustomResponse.success(ResponseCode.SUCCESS, null);
     }
 }
