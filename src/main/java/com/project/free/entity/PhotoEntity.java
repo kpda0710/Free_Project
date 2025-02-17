@@ -17,9 +17,12 @@ public class PhotoEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, updatable = false, unique = true)
     private Long photoId;
 
+    @Column(nullable = false, updatable = false, unique = true)
     private Long boardId;
 
+    @Column(nullable = false)
     private String photoPath;
 }

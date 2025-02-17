@@ -25,8 +25,10 @@ public class BaseEntity implements Serializable {
 
     private LocalDateTime updatedAt;
 
+    @Column(updatable = false)
     private LocalDateTime deletedAt;
 
+    @Column(nullable = false)
     private Boolean isDeleted;
 
     public void deleteSetting() {

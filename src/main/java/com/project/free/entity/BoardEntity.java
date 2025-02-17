@@ -20,16 +20,22 @@ public class BoardEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, updatable = false, unique = true)
     private Long boardId;
 
+    @Column(nullable = false, updatable = false, unique = true)
     private Long userId;
 
+    @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
     private String writer;
 
+    @Column(nullable = false)
     private Long views;
 
     @ToString.Exclude
