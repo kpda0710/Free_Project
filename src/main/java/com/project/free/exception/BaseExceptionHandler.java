@@ -10,7 +10,7 @@ public class BaseExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
     public CustomResponse<String> handleExceptionBaseException(BaseException exception){
-        return CustomResponse.fail(ResponseCode.SYSTEM_ERROR, exception.getCode() + ", Error Message: " + exception.getMessage() + ", ExtraMessage: " + exception.getExtraMessage());
+        return CustomResponse.fail(ResponseCode.SYSTEM_ERROR, exception.getCode() + ", Error Message: " + exception.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
