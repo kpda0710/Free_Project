@@ -1,7 +1,7 @@
 package com.project.free.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.project.free.util.CustomResponse;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -9,7 +9,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class BaseExceptionHandler {
 
     @ExceptionHandler(BaseException.class)
-    public ResponseEntity<String> handleExceptionBaseException(BaseException exception){
-        return new ResponseEntity<>("Error Code: " + exception.getCode() + ", Error Message: " + exception.getMessage() + ", ExtraMessage: " + exception.getExtraMessage(), HttpStatus.BAD_REQUEST);
+    public CustomResponse<String> handleExceptionBaseException(BaseException exception){
+        return CustomResponse.fail(ResponseCode.SYSTEM_ERROR, exception.getCode() + ", Error Message: " + exception.getMessage() + ", ExtraMessage: " + exception.getExtraMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public CustomResponse<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception){
+        return CustomResponse.fail(ResponseCode.SYSTEM_ERROR, exception.getMessage());
     }
 }
