@@ -7,28 +7,21 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ResponseCode {
 
-    SUCCESS("1000", "SUCCESS"),
-
-    USER_CREATE_SUCCESS("2201", "유저 생성 성공"),
-    USER_LOGIN_SUCCESS("2202", "유저 로그인 성공"),
-    USER_AUTHORIZATION_SUCCESS("2203", "유저 인증 성공"),
-    USER_GET_SUCCESS("2204", "유저 정보 가져오기 성공"),
-    USER_UPDATE_SUCCESS("2205", "유저 업데이트 성공"),
-    USER_DELETE_SUCCESS("2206", "유저 삭제 성공"),
+    SUCCESS("1000", "성공!!"),
     USER_NOT_FOUND("2401", "유저 정보를 찾을 수 없습니다."),
     USER_NOT_PASSWORD("2402", "비밀번호가 일치하지 않습니다."),
 
-    BOARD_NOT_FOUND("3001", "BOARD NOT FOUND"),
-    BOARD_USERID_NOT_MATCH("3002", "BOARD USERID NOT MATCH"),
+    BOARD_NOT_FOUND("3001", "게시판이 존재하지 않습니다."),
+    BOARD_USERID_NOT_MATCH("3002", "게시판과 유저 정보가 일치하지 않습니다."),
 
-    COMMENT_NOT_FOUND("4001", "COMMENT NOT FOUND"),
+    COMMENT_NOT_FOUND("4001", "댓글을 찾을 수 없습니다."),
 
-    LIKES_NOT_FOUND("5001", "LIKES NOT FOUND"),
-    LIKES_DUPLICATE("5002", "LIKES DUPLICATE"),
+    LIKES_NOT_FOUND("5001", "좋아요를 찾을 수 없습니다."),
+    LIKES_DUPLICATE("5002", "이미 좋아요를 눌렀습니다."),
 
-    FILE_SAVE_ERROR("6001", "FILE SAVE ERROR"),
+    FILE_SAVE_ERROR("6001", "파일 저장 중 오류가 발생했습니다."),
 
-    SYSTEM_ERROR("9000", "SYSTEM ERROR"),
+    SYSTEM_ERROR("9000", "시스템 에러가 발생했습니다."),
     ;
 
     private final String code;
