@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
@@ -16,10 +17,10 @@ public class CustomResponse<T> {
     private String message;
 
     public static <T> CustomResponse<T> success(ResponseCode responseCode, T data) {
-        return new CustomResponse<T>(new CustomResponseHeader(responseCode.getCode(), "SUCCESS"), data, responseCode.getMessage());
+        return new CustomResponse<T>(new CustomResponseHeader(HttpStatus.OK, responseCode.getCode(), "SUCCESS"), data, responseCode.getMessage());
     }
 
     public static <T> CustomResponse<T> fail(ResponseCode responseCode, T data) {
-        return new CustomResponse<T>(new CustomResponseHeader(responseCode.getCode(), "FAIL"), data, responseCode.getMessage());
+        return new CustomResponse<T>(new CustomResponseHeader(HttpStatus.BAD_REQUEST, responseCode.getCode(), "FAIL"), data, responseCode.getMessage());
     }
 }
