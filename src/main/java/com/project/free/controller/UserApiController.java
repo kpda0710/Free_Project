@@ -28,7 +28,7 @@ public class UserApiController {
     }
 
     @PostMapping("/login")
-    public CustomResponse<String> loginUser(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+    public CustomResponse<String> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
         String token = userService.loginUser(userLoginRequest);
         return CustomResponse.success(ResponseCode.SUCCESS, token);
     }
