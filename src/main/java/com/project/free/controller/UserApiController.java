@@ -56,19 +56,4 @@ public class UserApiController {
         userService.deleteUser(authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, null);
     }
-
-    // 모든 유저 정보 가져오는 어드민 API
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @GetMapping("/all")
-    public CustomResponse<PageImpl<UserResponse>> getAllUsers(@RequestParam(name = "page", defaultValue = "0") int page, Authentication authentication) {
-        PageImpl<UserResponse> userResponses = userService.getUserAll(page, authentication);
-        return CustomResponse.success(ResponseCode.SUCCESS, userResponses);
-    }
-
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("{userId}")
-    public CustomResponse<Void> deleteUserById(@PathVariable(name = "userId") Long userId, Authentication authentication) {
-        userService.deleteUserById(userId, authentication);
-        return CustomResponse.success(ResponseCode.SUCCESS, null);
-    }
 }

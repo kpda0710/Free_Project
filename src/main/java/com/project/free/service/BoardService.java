@@ -215,6 +215,14 @@ public class BoardService {
         boardEntityRepository.save(boardEntity);
     }
 
+    @Transactional
+    // 게시판 아이디로 게시판 삭제 - 어드민 전용
+    public void deleteBoardById(Long boardId, Authentication authentication) {
+        BoardEntity boardEntity = getBoardEntityByID(boardId);
+        boardEntity.deleteSetting();
+        boardEntityRepository.save(boardEntity);
+    }
+
     // BoardEntity 가져오기
     private BoardEntity getBoardEntityByID(Long boardId) {
         return boardEntityRepository.findById(boardId).orElseThrow(() -> new BaseException(ResponseCode.BOARD_NOT_FOUND));

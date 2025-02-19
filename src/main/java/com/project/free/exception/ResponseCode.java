@@ -20,6 +20,7 @@ public enum ResponseCode {
     LIKES_DUPLICATE("5002", "이미 좋아요를 눌렀습니다."),
 
     FILE_SAVE_ERROR("6001", "파일 저장 중 오류가 발생했습니다."),
+    FILE_NOT_FOUND("6002", "파일을 찾을 수 없습니다."),
 
     SYSTEM_ERROR("9000", "시스템 에러가 발생했습니다."),
     FAIL_VALIDATION("9001", "벨리데이션 실패")

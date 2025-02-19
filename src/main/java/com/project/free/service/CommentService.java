@@ -117,6 +117,7 @@ public class CommentService {
     }
 
     @Transactional
+    // 답글 생성
     public CommentReplyResponse createReply(Long commentId, CommentRequest commentRequest, Authentication authentication) {
         UserInfoDto userInfoDto = getUserInfoDto(authentication);
         CommentEntity reply = commentEntityRepository.findById(commentId).orElseThrow(() -> new BaseException(ResponseCode.COMMENT_NOT_FOUND));
@@ -143,6 +144,13 @@ public class CommentService {
                 .createdAt(saved.getCreatedAt())
                 .updatedAt(saved.getUpdatedAt())
                 .build();
+    }
+
+    // 댓글 아이디로 댓글 삭제 - 어드민 전용
+    public void deleteCommentById(Long commentId, Authentication authentication) {
+        CommentEntity commentEntity = getCommentEntity(commentId);
+        commentEntity.deleteSetting();
+        commentEntityRepository.save(commentEntity);
     }
 
     // CommentEntity 가져오기
