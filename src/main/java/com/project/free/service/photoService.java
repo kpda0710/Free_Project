@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class photoService {
+public class PhotoService {
 
     private final photoEntityRepository photoEntityRepository;
     private final BoardEntityRepository boardEntityRepository;
@@ -60,6 +60,31 @@ public class photoService {
             throw new BaseException(ResponseCode.FILE_SAVE_ERROR);
         }
 
+    }
+
+    @Transactional
+    // 파일 삭제
+    public void deleteImage(Long photoId, Authentication authentication) {
+        PhotoEntity photoEntity = photoEntityRepository.findById(photoId).orElseThrow(() -> new BaseException(ResponseCode.FILE_NOT_FOUND));
+        BoardEntity boardEntity = boardEntityRepository.findById(photoEntity.getBoardId()).orElseThrow(() -> new BaseException(ResponseCode.BOARD_NOT_FOUND));
+
+        boardEntity.getPhotos().remove(photoId);
+        photoEntity.deleteSetting();
+
+        photoEntityRepository.save(photoEntity);
+        boardEntityRepository.save(boardEntity);
+    }
+
+    // 파일 아이디로 파일 삭제 - 어드민 전용
+    public void deleteImageById(Long photoId, Authentication authentication) {
+        PhotoEntity photoEntity = photoEntityRepository.findById(photoId).orElseThrow(() -> new BaseException(ResponseCode.FILE_NOT_FOUND));
+        BoardEntity boardEntity = boardEntityRepository.findById(photoEntity.getBoardId()).orElseThrow(() -> new BaseException(ResponseCode.BOARD_NOT_FOUND));
+
+        boardEntity.getPhotos().remove(photoId);
+        photoEntity.deleteSetting();
+
+        photoEntityRepository.save(photoEntity);
+        boardEntityRepository.save(boardEntity);
     }
 
     private String saveImage(MultipartFile image, String uploadsDir) throws IOException {
