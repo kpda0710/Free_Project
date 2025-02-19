@@ -7,6 +7,7 @@ import com.project.free.util.CustomResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -59,8 +60,15 @@ public class UserApiController {
     // 모든 유저 정보 가져오는 어드민 API
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/all")
-    public CustomResponse<List<UserResponse>> getAllUsers(Authentication authentication) {
-        List<UserResponse> userResponseList = userService.getUserAll(authentication);
-        return CustomResponse.success(ResponseCode.SUCCESS, userResponseList);
+    public CustomResponse<PageImpl<UserResponse>> getAllUsers(@RequestParam(name = "page", defaultValue = "0") int page, Authentication authentication) {
+        PageImpl<UserResponse> userResponses = userService.getUserAll(page, authentication);
+        return CustomResponse.success(ResponseCode.SUCCESS, userResponses);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("{userId}")
+    public CustomResponse<Void> deleteUserById(@PathVariable(name = "userId") Long userId, Authentication authentication) {
+        userService.deleteUserById(userId, authentication);
+        return CustomResponse.success(ResponseCode.SUCCESS, null);
     }
 }

@@ -1,6 +1,7 @@
 package com.project.free.service;
 
 import com.project.free.dto.user.*;
+import com.project.free.entity.BoardEntity;
 import com.project.free.entity.UserEntity;
 import com.project.free.entity.UserStatus;
 import com.project.free.exception.BaseException;
@@ -9,12 +10,14 @@ import com.project.free.repository.UserEntityRepository;
 import com.project.free.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -141,10 +144,15 @@ public class UserService {
         userEntityRepository.save(userEntity);
     }
 
-    public List<UserResponse> getUserAll(Authentication authentication) {
-        List<UserEntity> userEntityList = userEntityRepository.findAll();
+    // 유저 정보 모두 가져오기 - 어드민 전용
+    @Transactional(readOnly = true)
+    public PageImpl<UserResponse> getUserAll(int pageNumber, Authentication authentication) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.asc("createdAt"));
+        Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(sorts));
+        Page<UserEntity> userEntities = userEntityRepository.findAll(pageable);
 
-        return userEntityList.stream().map(userEntity ->
+        List<UserResponse> userResponseList = userEntities.stream().map(userEntity ->
                 UserResponse.builder()
                         .userId(userEntity.getUserId())
                         .name(userEntity.getName())
@@ -154,6 +162,15 @@ public class UserService {
                         .createdAt(userEntity.getCreatedAt())
                         .updatedAt(userEntity.getUpdatedAt())
                         .build()).collect(Collectors.toList());
+
+        return new PageImpl<>(userResponseList, pageable, userEntities.getTotalElements());
+    }
+
+    // 유저아이디로 유저 삭제하기 - 어드민 전용
+    public void deleteUserById(Long userId, Authentication authentication) {
+        UserEntity userEntity = getUserEntity(userId);
+        userEntity.deleteSetting();
+        userEntityRepository.save(userEntity);
     }
 
     // UserEntity 가져오기
