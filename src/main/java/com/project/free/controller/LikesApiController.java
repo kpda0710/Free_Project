@@ -15,12 +15,14 @@ public class LikesApiController {
 
     private final LikesService likesService;
 
+    // 좋아요 생성 API
     @PostMapping("{boardId}")
     public CustomResponse<LikesResponse> createLikes(@PathVariable(name = "boardId") Long boardId, Authentication authentication) {
         LikesResponse likesResponse = likesService.createLikes(boardId, authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, likesResponse);
     }
 
+    // 좋아요 삭제 API
     @DeleteMapping("{boardId}")
     public CustomResponse<Void> deleteLikes(@PathVariable(name = "boardId") Long boardId, Authentication authentication) {
         likesService.deleteLikes(boardId, authentication);

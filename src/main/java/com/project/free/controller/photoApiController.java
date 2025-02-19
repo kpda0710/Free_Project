@@ -18,6 +18,7 @@ public class photoApiController {
 
     private final photoService photoService;
 
+    // 게시판 사진 게시 API
     @PostMapping("{boardId}")
     public CustomResponse<List<photoResponse>> uploadImages(@PathVariable(name = "boardId") Long boardId, @RequestParam(name = "images") List<MultipartFile> images, Authentication authentication) {
         List<photoResponse> photoResponse = photoService.uploadImage(boardId, images, authentication);

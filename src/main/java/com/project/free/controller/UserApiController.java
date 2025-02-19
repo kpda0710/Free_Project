@@ -21,36 +21,42 @@ public class UserApiController {
 
     private final UserService userService;
 
+    // 유저 가입 API
     @PostMapping("/signup")
     public CustomResponse<UserResponse> signupUser(@RequestBody @Valid UserRequest userRequest) {
         UserResponse userResponse = userService.signupUser(userRequest);
         return CustomResponse.success(ResponseCode.SUCCESS, userResponse);
     }
 
+    // 유저 로그인 API
     @PostMapping("/login")
     public CustomResponse<String> loginUser(@RequestBody UserLoginRequest userLoginRequest) {
         String token = userService.loginUser(userLoginRequest);
         return CustomResponse.success(ResponseCode.SUCCESS, token);
     }
 
+    // 유저 정보 가져오는 API
     @GetMapping()
     public CustomResponse<UserResponse> getUser(Authentication authentication) {
         UserResponse userResponse = userService.getUser(authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, userResponse);
     }
 
+    // 유저 정보 수정하는 API
     @PutMapping()
     public CustomResponse<UserResponse> updateUser(@RequestBody @Valid UserRequest userRequest, Authentication authentication) {
         UserResponse userResponse = userService.updateUser(userRequest, authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, userResponse);
     }
 
+    // 유저 삭제하는 API
     @DeleteMapping()
     public CustomResponse<Void> deleteUser(Authentication authentication) {
         userService.deleteUser(authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, null);
     }
 
+    // 모든 유저 정보 가져오는 어드민 API
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/all")
     public CustomResponse<List<UserResponse>> getAllUsers(Authentication authentication) {

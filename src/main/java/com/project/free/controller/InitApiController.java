@@ -24,6 +24,7 @@ public class InitApiController {
     private final BoardEntityRepository boardEntityRepository;
     private final PasswordEncoder passwordEncoder;
 
+    // 더미 데이터 추가하는 API
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping()
     public CustomResponse<Void> initData(Authentication authentication) {
