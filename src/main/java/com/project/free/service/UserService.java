@@ -31,6 +31,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final BoardService boardService;
     private final CommentService commentService;
+    private final SellerService sellerService;
 
     // 유저 가입
     @Transactional
@@ -121,6 +122,9 @@ public class UserService {
 
         // 댓글 이름 업데이트
         commentService.updateCommentUserName(request, authentication);
+
+        // 판매자 이름 및 이메일 업데이트
+        sellerService.updateSellerUserNameAndUserEmail(request, authentication);
 
         return UserResponse.builder()
                 .userId(saved.getUserId())
