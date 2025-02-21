@@ -164,6 +164,7 @@ public class CommentService {
         return principal.getUserInfoDto();
     }
 
+    @Transactional
     // 유저 이름 변경으로 댓글 작성자 이름 변경
     public void updateCommentUserName(UserRequest request, Authentication authentication) {
         UserInfoDto userInfoDto = getUserInfoDto(authentication);

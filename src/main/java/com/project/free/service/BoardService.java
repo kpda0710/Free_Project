@@ -234,6 +234,7 @@ public class BoardService {
         return principal.getUserInfoDto();
     }
 
+    @Transactional
     // 유저 이름 변경으로 게시판 작성자 이름 변경
     public void updateBoardUserName(UserRequest request, Authentication authentication) {
         UserInfoDto userInfoDto = getUserInfoDto(authentication);
