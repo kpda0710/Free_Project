@@ -1,5 +1,6 @@
 package com.project.free.entity;
 
+import com.project.free.dto.seller.SellerUpdateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -34,4 +35,12 @@ public class SellerEntity extends BaseEntity {
 
     @Column(nullable = false)
     private String sellerAddress;
+
+    public void updateSeller(SellerUpdateRequest sellerUpdateRequest) {
+        this.sellerName = sellerUpdateRequest.getSellerName();
+        this.sellerEmail = sellerUpdateRequest.getSellerEmail();
+        this.sellerPhone = sellerUpdateRequest.getSellerPhone();
+        this.sellerAddress = sellerUpdateRequest.getSellerAddress();
+        this.updateSetting();
+    }
 }
