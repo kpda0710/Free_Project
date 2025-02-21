@@ -25,4 +25,8 @@ public class PhotoEntity extends BaseEntity {
 
     @Column(nullable = false)
     private String photoPath;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private PhotoStatus photoStatus;
 }

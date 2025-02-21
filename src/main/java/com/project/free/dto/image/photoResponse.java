@@ -1,5 +1,6 @@
 package com.project.free.dto.image;
 
+import com.project.free.entity.PhotoStatus;
 import lombok.*;
 
 @Getter
@@ -14,4 +15,6 @@ public class photoResponse {
     private Long boardId;
 
     private String imagePath;
+
+    private PhotoStatus photoStatus;
 }

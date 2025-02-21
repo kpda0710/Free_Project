@@ -3,6 +3,7 @@ package com.project.free.service;
 import com.project.free.dto.image.photoResponse;
 import com.project.free.entity.BoardEntity;
 import com.project.free.entity.PhotoEntity;
+import com.project.free.entity.PhotoStatus;
 import com.project.free.exception.BaseException;
 import com.project.free.exception.ResponseCode;
 import com.project.free.repository.BoardEntityRepository;
@@ -30,7 +31,7 @@ public class PhotoService {
     private final BoardEntityRepository boardEntityRepository;
 
     @Transactional
-    public List<photoResponse> uploadImage(Long boardId, List<MultipartFile> images, Authentication authentication) {
+    public List<photoResponse> uploadImageByBoard(Long boardId, List<MultipartFile> images, Authentication authentication) {
         List<PhotoEntity> imageEntities = new ArrayList<>();
         try {
             String uploadsDir = "src/main/resources/static/uploads/thumbnails/";
@@ -41,6 +42,7 @@ public class PhotoService {
                         .boardId(boardId)
                         .photoPath(dbFilePath)
                         .isDeleted(false)
+                        .photoStatus(PhotoStatus.BOARD)
                         .build();
 
                 BoardEntity boardEntity = boardEntityRepository.findById(boardId).orElseThrow(() -> new BaseException(ResponseCode.BOARD_NOT_FOUND));
@@ -54,6 +56,7 @@ public class PhotoService {
                     .photoId(entity.getPhotoId())
                     .boardId(entity.getBoardId())
                     .imagePath(entity.getPhotoPath())
+                    .photoStatus(PhotoStatus.BOARD)
                     .build()).collect(Collectors.toList());
 
         } catch (IOException e) {
@@ -75,6 +78,7 @@ public class PhotoService {
         boardEntityRepository.save(boardEntity);
     }
 
+    @Transactional
     // 파일 아이디로 파일 삭제 - 어드민 전용
     public void deleteImageById(Long photoId, Authentication authentication) {
         PhotoEntity photoEntity = photoEntityRepository.findById(photoId).orElseThrow(() -> new BaseException(ResponseCode.FILE_NOT_FOUND));
