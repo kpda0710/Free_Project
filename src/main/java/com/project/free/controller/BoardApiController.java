@@ -34,7 +34,7 @@ public class BoardApiController {
     // 제목 검색으로 게시판 가져오는 API
     @GetMapping("/title")
     public CustomResponse<Page<BoardResponse>> getBoardsByTitle(@RequestParam("title") String title, @RequestParam(name = "page", defaultValue = "0") int page, Authentication authentication) {
-        Page<BoardResponse> boardResponseList = boardService.getBoardsByTitle(title, page);
+        Page<BoardResponse> boardResponseList = boardService.getBoardsByTitle(title, page, authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, boardResponseList);
     }
 

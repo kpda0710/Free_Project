@@ -3,7 +3,7 @@ package com.project.free.service;
 import com.project.free.dto.board.*;
 import com.project.free.dto.comment.CommentReplyResponse;
 import com.project.free.dto.comment.CommentResponse;
-import com.project.free.dto.image.photoResponse;
+import com.project.free.dto.image.PhotoResponse;
 import com.project.free.dto.like.LikesResponse;
 import com.project.free.dto.user.CustomUserDetails;
 import com.project.free.dto.user.UserInfoDto;
@@ -80,7 +80,7 @@ public class BoardService {
 
     @Transactional(readOnly = true)
     // 제목으로 게시글 검색
-    public Page<BoardResponse> getBoardsByTitle(String title, int pageNumber) {
+    public Page<BoardResponse> getBoardsByTitle(String title, int pageNumber, Authentication authentication) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.asc("createdAt"));
         Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(sorts));
@@ -144,10 +144,10 @@ public class BoardService {
                                 .userId(likesEntity.getUserId())
                                 .build()).collect(Collectors.toList()))
                 .photo(saved.getPhotos().stream().map(imageEntity ->
-                        photoResponse.builder()
+                        PhotoResponse.builder()
                                 .photoId(imageEntity.getPhotoId())
-                                .boardId(imageEntity.getBoardId())
-                                .imagePath(imageEntity.getPhotoPath())
+                                .targetId(imageEntity.getTargetId())
+                                .photoPath(imageEntity.getPhotoPath())
                                 .build()).collect(Collectors.toList()))
                 .createdAt(saved.getCreatedAt())
                 .updatedAt(saved.getUpdatedAt())
