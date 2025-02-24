@@ -22,8 +22,10 @@ public enum ResponseCode {
     FILE_SAVE_ERROR("6001", "파일 저장 중 오류가 발생했습니다."),
     FILE_NOT_FOUND("6002", "파일을 찾을 수 없습니다."),
 
+    ITEM_NOT_FOUND("7002", "상품을 찾을 수 없습니다."),
+
     SYSTEM_ERROR("9000", "시스템 에러가 발생했습니다."),
-    FAIL_VALIDATION("9001", "벨리데이션 실패")
+    FAIL_VALIDATION("9001", "벨리데이션 체크 실패")
     ;
 
     private final String code;
