@@ -8,13 +8,13 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class photoResponse {
+public class PhotoResponse {
 
     private Long photoId;
 
-    private Long boardId;
+    private Long targetId;
 
-    private String imagePath;
+    private String photoPath;
 
     private PhotoStatus photoStatus;
 }

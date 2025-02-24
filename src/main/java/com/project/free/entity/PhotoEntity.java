@@ -21,7 +21,7 @@ public class PhotoEntity extends BaseEntity {
     private Long photoId;
 
     @Column(nullable = false, updatable = false)
-    private Long boardId;
+    private Long targetId;
 
     @Column(nullable = false)
     private String photoPath;

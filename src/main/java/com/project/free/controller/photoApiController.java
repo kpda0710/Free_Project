@@ -1,6 +1,6 @@
 package com.project.free.controller;
 
-import com.project.free.dto.image.photoResponse;
+import com.project.free.dto.image.PhotoResponse;
 import com.project.free.exception.ResponseCode;
 import com.project.free.service.PhotoService;
 import com.project.free.util.CustomResponse;
@@ -14,17 +14,25 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/images")
 @RequiredArgsConstructor
-public class photoApiController {
+public class PhotoApiController {
 
     private final PhotoService photoService;
 
     // 게시판 사진 게시 API
-    @PostMapping("{boardId}")
-    public CustomResponse<List<photoResponse>> uploadImages(@PathVariable(name = "boardId") Long boardId, @RequestParam(name = "images") List<MultipartFile> images, Authentication authentication) {
-        List<photoResponse> photoResponse = photoService.uploadImageByBoard(boardId, images, authentication);
+    @PostMapping("/board/{boardId}")
+        public CustomResponse<List<PhotoResponse>> uploadImagesByBoard(@PathVariable(name = "boardId") Long boardId, @RequestParam(name = "images") List<MultipartFile> images, Authentication authentication) {
+        List<PhotoResponse> photoResponse = photoService.uploadImageByBoard(boardId, images, authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, photoResponse);
     }
 
+    @PostMapping("/item/{itemId}")
+    public CustomResponse<List<PhotoResponse>> uploadImagesByItem(@PathVariable(name = "itemId") Long itemId, @RequestParam(name = "images") List<MultipartFile> images, Authentication authentication) {
+        List<PhotoResponse> photoResponse = photoService.uploadImageByItem(itemId, images, authentication);
+        return CustomResponse.success(ResponseCode.SUCCESS, photoResponse);
+    }
+
+
+    // 사진 삭제 API
     @DeleteMapping("{photoId}")
     public CustomResponse<String> deleteImage(@PathVariable(name = "photoId") Long photoId, Authentication authentication) {
         photoService.deleteImage(photoId, authentication);
