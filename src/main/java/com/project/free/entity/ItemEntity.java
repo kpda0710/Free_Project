@@ -44,16 +44,32 @@ public class ItemEntity extends BaseEntity {
     @OneToMany
     private List<PhotoEntity> photos = new ArrayList<>();
 
+    public void updateItemName(String itemName) {
+        if (this.itemName != null) {
+            this.itemName = itemName;
+            this.updateSetting();
+        }
+    }
+
     public void updatePrice(BigDecimal price) {
-        this.itemPrice = price;
+        if (this.itemPrice != null) {
+            this.itemPrice = price;
+            this.updateSetting();
+        }
     }
 
     public void updateDescription(String description) {
-        this.itemDescription = description;
+        if (this.itemDescription != null) {
+            this.itemDescription = description;
+            this.updateSetting();
+        }
     }
 
     public void updateCategory(ItemCategory category) {
-        this.itemCategory = category;
+        if (this.itemCategory != null) {
+            this.itemCategory = category;
+            this.updateSetting();
+        }
     }
 
     public void uploadImage(PhotoEntity photoEntity) {
