@@ -138,7 +138,7 @@ public class CommentService {
 
     @Transactional
     // 댓글 삭제
-    public void deleteComment(Long commentId) {
+    public void deleteCommentBoard(Long commentId) {
         CommentEntity commentEntity = getCommentEntity(commentId);
         BoardEntity boardEntity = boardEntityRepository.findById(commentEntity.getTargetId()).orElseThrow(() -> new BaseException(ResponseCode.BOARD_NOT_FOUND));
 
@@ -149,6 +149,21 @@ public class CommentService {
 
         commentEntityRepository.save(commentEntity);
         boardEntityRepository.save(boardEntity);
+    }
+
+    @Transactional
+    // 댓글 삭제
+    public void deleteCommentItem(Long commentId) {
+        CommentEntity commentEntity = getCommentEntity(commentId);
+        ItemEntity itemEntity = itemEntityRepository.findById(commentEntity.getTargetId()).orElseThrow(() -> new BaseException(ResponseCode.ITEM_NOT_FOUND));
+
+        commentEntity.deleteSetting();
+
+        List<CommentEntity> comments = itemEntity.getComments();
+        comments.remove(commentEntity);
+
+        commentEntityRepository.save(commentEntity);
+        itemEntityRepository.save(itemEntity);
     }
 
     @Transactional

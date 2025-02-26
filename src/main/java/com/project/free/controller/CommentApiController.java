@@ -36,10 +36,17 @@ public class CommentApiController {
         return CustomResponse.success(ResponseCode.SUCCESS, commentResponse);
     }
 
-    // 댓글 or 답글 삭제하는 API
-    @DeleteMapping("{commentId}")
-    public CustomResponse<Void> deleteComment(@PathVariable(name = "commentId") Long commentId, Authentication authentication) {
-        commentService.deleteComment(commentId);
+    // 댓글 or 답글 삭제하는 API(게시글)
+    @DeleteMapping("/board/{commentId}")
+    public CustomResponse<Void> deleteCommentBoard(@PathVariable(name = "commentId") Long commentId, Authentication authentication) {
+        commentService.deleteCommentBoard(commentId);
+        return CustomResponse.success(ResponseCode.SUCCESS, null);
+    }
+
+    // 댓글 or 답글 삭제하는 API(상품)
+    @DeleteMapping("/item/{commentId}")
+    public CustomResponse<Void> deleteCommentItem(@PathVariable(name = "commentId") Long commentId, Authentication authentication) {
+        commentService.deleteCommentItem(commentId);
         return CustomResponse.success(ResponseCode.SUCCESS, null);
     }
 
