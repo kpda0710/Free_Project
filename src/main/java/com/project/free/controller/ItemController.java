@@ -1,5 +1,6 @@
 package com.project.free.controller;
 
+import com.project.free.dto.item.ItemDetailResponse;
 import com.project.free.dto.item.ItemResponse;
 import com.project.free.dto.item.ItemRequest;
 import com.project.free.dto.item.ItemUpdateRequest;
@@ -26,8 +27,8 @@ public class ItemController {
     }
 
     @GetMapping("{itemId}")
-    public CustomResponse<ItemResponse> getItemById(@PathVariable(name = "itemId") Long itemId, Authentication authentication) {
-        ItemResponse itemResponse = itemService.getItemById(itemId, authentication);
+    public CustomResponse<ItemDetailResponse> getItemById(@PathVariable(name = "itemId") Long itemId, Authentication authentication) {
+        ItemDetailResponse itemResponse = itemService.getItemById(itemId, authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, itemResponse);
     }
 

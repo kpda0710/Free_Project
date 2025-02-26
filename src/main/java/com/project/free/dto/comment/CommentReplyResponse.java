@@ -3,7 +3,6 @@ package com.project.free.dto.comment;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter
@@ -17,7 +16,7 @@ public class CommentReplyResponse {
 
     private Long userId;
 
-    private Long boardId;
+    private Long targetId;
 
     private String content;
 

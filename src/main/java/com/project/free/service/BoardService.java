@@ -120,14 +120,14 @@ public class BoardService {
                         CommentResponse.builder()
                                 .commentId(commentEntity.getCommentId())
                                 .userId(commentEntity.getUserId())
-                                .boardId(commentEntity.getBoardId())
+                                .targetId(commentEntity.getTargetId())
                                 .content(commentEntity.getContent())
                                 .writer(commentEntity.getWriter())
                                 .reply(commentEntity.getReply().stream().map(entity -> CommentReplyResponse
                                         .builder()
                                         .commentId(entity.getCommentId())
                                         .userId(entity.getUserId())
-                                        .boardId(entity.getBoardId())
+                                        .targetId(entity.getTargetId())
                                         .content(entity.getContent())
                                         .writer(entity.getWriter())
                                         .createdAt(entity.getCreatedAt())
@@ -140,7 +140,7 @@ public class BoardService {
                 .likes(saved.getLikes().stream().map(likesEntity ->
                         LikesResponse.builder()
                                 .likesId(likesEntity.getLikesId())
-                                .boardId(likesEntity.getBoardId())
+                                .targetId(likesEntity.getTargetId())
                                 .userId(likesEntity.getUserId())
                                 .build()).collect(Collectors.toList()))
                 .photo(saved.getPhotos().stream().map(imageEntity ->

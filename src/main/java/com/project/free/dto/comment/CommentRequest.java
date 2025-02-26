@@ -14,7 +14,7 @@ import lombok.*;
 public class CommentRequest {
 
     @NotNull
-    private Long boardId;
+    private Long targetId;
 
     @NotBlank
     private String content;

@@ -27,11 +27,11 @@ public class LikesService {
     public LikesResponse createLikes(Long boardId, Authentication authentication) throws BaseException {
         UserInfoDto userInfoDto = getUserInfoDto(authentication);
         BoardEntity boardEntity = boardEntityRepository.findById(boardId).orElseThrow(() -> new BaseException(ResponseCode.BOARD_NOT_FOUND));
-        likesEntityRepository.findByUserIdAndBoardId(userInfoDto.getUserId(), boardId)
+        likesEntityRepository.findByUserIdAndTargetId(userInfoDto.getUserId(), boardId)
                 .ifPresent(likesEntity -> {throw new BaseException(ResponseCode.LIKES_DUPLICATE);});
 
         LikesEntity likesEntity = LikesEntity.builder()
-                .boardId(boardId)
+                .targetId(boardId)
                 .userId(userInfoDto.getUserId())
                 .isDeleted(false)
                 .build();
@@ -43,7 +43,7 @@ public class LikesService {
 
         return LikesResponse.builder()
                 .likesId(saved.getLikesId())
-                .boardId(boardEntity.getBoardId())
+                .targetId(boardEntity.getBoardId())
                 .userId(saved.getUserId())
                 .build();
     }
@@ -53,7 +53,7 @@ public class LikesService {
     public void deleteLikes(Long boardId, Authentication authentication) throws BaseException {
         UserInfoDto userInfoDto = getUserInfoDto(authentication);
         BoardEntity boardEntity = boardEntityRepository.findById(boardId).orElseThrow(() -> new BaseException(ResponseCode.BOARD_NOT_FOUND));
-        LikesEntity likesEntity = likesEntityRepository.findByUserIdAndBoardId(userInfoDto.getUserId(), boardId).orElseThrow(() -> new BaseException(ResponseCode.LIKES_NOT_FOUND));
+        LikesEntity likesEntity = likesEntityRepository.findByUserIdAndTargetId(userInfoDto.getUserId(), boardId).orElseThrow(() -> new BaseException(ResponseCode.LIKES_NOT_FOUND));
 
         boardEntity.getLikes().remove(likesEntity);
         likesEntity.deleteSetting();

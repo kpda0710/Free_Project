@@ -27,7 +27,7 @@ public class CommentEntity extends BaseEntity {
     private Long userId;
 
     @Column(nullable = false, updatable = false)
-    private Long boardId;
+    private Long targetId;
 
     @Column(nullable = false)
     private String content;

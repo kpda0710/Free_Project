@@ -17,9 +17,15 @@ public class CommentApiController {
     private final CommentService commentService;
 
     // 댓글 생성하는 API
-    @PostMapping()
-    public CustomResponse<CommentResponse> createComment(@RequestBody @Valid CommentRequest commentRequest, Authentication authentication) {
-        CommentResponse commentResponse = commentService.createComment(commentRequest, authentication);
+    @PostMapping("/board")
+    public CustomResponse<CommentResponse> createCommentByBoard(@RequestBody @Valid CommentRequest commentRequest, Authentication authentication) {
+        CommentResponse commentResponse = commentService.createCommentByBoard(commentRequest, authentication);
+        return CustomResponse.success(ResponseCode.SUCCESS, commentResponse);
+    }
+
+    @PostMapping("/item")
+    public CustomResponse<CommentResponse> createCommentByItem(@RequestBody @Valid CommentRequest commentRequest, Authentication authentication) {
+        CommentResponse commentResponse = commentService.createCommentByItem(commentRequest, authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, commentResponse);
     }
 

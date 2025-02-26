@@ -1,9 +1,13 @@
 package com.project.free.service;
 
+import com.project.free.dto.comment.CommentReplyResponse;
+import com.project.free.dto.comment.CommentResponse;
 import com.project.free.dto.image.PhotoResponse;
+import com.project.free.dto.item.ItemDetailResponse;
 import com.project.free.dto.item.ItemResponse;
 import com.project.free.dto.item.ItemRequest;
 import com.project.free.dto.item.ItemUpdateRequest;
+import com.project.free.dto.like.LikesResponse;
 import com.project.free.dto.user.CustomUserDetails;
 import com.project.free.dto.user.UserInfoDto;
 import com.project.free.entity.*;
@@ -59,16 +63,42 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     // 상품 ID로 조회
-    public ItemResponse getItemById(Long itemId, Authentication authentication) {
+    public ItemDetailResponse getItemById(Long itemId, Authentication authentication) {
         ItemEntity itemEntity = itemEntityRepository.findById(itemId).orElseThrow(() -> new BaseException(ResponseCode.ITEM_NOT_FOUND));
 
-        return ItemResponse.builder()
+        return ItemDetailResponse.builder()
                 .itemId(itemEntity.getItemId())
                 .sellerId(itemEntity.getSellerId())
                 .itemName(itemEntity.getItemName())
                 .itemPrice(itemEntity.getItemPrice())
                 .itemDescription(itemEntity.getItemDescription())
                 .itemCategory(itemEntity.getItemCategory())
+                .likes(itemEntity.getLikes().stream().map(likesEntity ->
+                        LikesResponse.builder()
+                                .likesId(likesEntity.getLikesId())
+                                .targetId(likesEntity.getTargetId())
+                                .userId(likesEntity.getUserId())
+                                .build()).collect(Collectors.toList()))
+                .comments(itemEntity.getComments().stream().map(commentEntity ->
+                        CommentResponse.builder()
+                                .commentId(commentEntity.getCommentId())
+                                .userId(commentEntity.getUserId())
+                                .targetId(commentEntity.getTargetId())
+                                .content(commentEntity.getContent())
+                                .writer(commentEntity.getWriter())
+                                .createdAt(commentEntity.getCreatedAt())
+                                .updatedAt(commentEntity.getUpdatedAt())
+                                .reply(commentEntity.getReply().stream().map(reply ->
+                                        CommentReplyResponse.builder()
+                                                .commentId(reply.getCommentId())
+                                                .userId(reply.getUserId())
+                                                .targetId(reply.getTargetId())
+                                                .content(reply.getContent())
+                                                .writer(reply.getWriter())
+                                                .createdAt(reply.getCreatedAt())
+                                                .updatedAt(reply.getUpdatedAt())
+                                                .build()).collect(Collectors.toList()))
+                                .build()).collect(Collectors.toList()))
                 .photos(itemEntity.getPhotos().stream().map(photoEntity ->
                         PhotoResponse.builder()
                                 .photoId(photoEntity.getPhotoId())
@@ -112,6 +142,7 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
+    // 상품 카테고리로 조회
     public PageImpl<ItemResponse> getItemByCategory(ItemCategory itemCategory, int pageNumber, Authentication authentication) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.asc("createdAt"));

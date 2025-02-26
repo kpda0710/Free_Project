@@ -12,7 +12,7 @@ public class LikesResponse {
 
     private Long likesId;
 
-    private Long boardId;
+    private Long targetId;
 
     private Long userId;
 }

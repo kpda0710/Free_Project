@@ -17,7 +17,7 @@ public class CommentResponse {
 
     private Long userId;
 
-    private Long boardId;
+    private Long targetId;
 
     private String content;
 

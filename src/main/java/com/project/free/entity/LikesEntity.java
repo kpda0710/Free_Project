@@ -21,7 +21,7 @@ public class LikesEntity extends BaseEntity {
     private Long likesId;
 
     @Column(nullable = false, updatable = false)
-    private Long boardId;
+    private Long targetId;
 
     @Column(nullable = false, updatable = false)
     private Long userId;

@@ -9,10 +9,12 @@ import com.project.free.dto.user.UserInfoDto;
 import com.project.free.dto.user.UserRequest;
 import com.project.free.entity.BoardEntity;
 import com.project.free.entity.CommentEntity;
+import com.project.free.entity.ItemEntity;
 import com.project.free.exception.BaseException;
 import com.project.free.exception.ResponseCode;
 import com.project.free.repository.BoardEntityRepository;
 import com.project.free.repository.CommentEntityRepository;
+import com.project.free.repository.ItemEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -28,17 +30,18 @@ public class CommentService {
 
     private final CommentEntityRepository commentEntityRepository;
     private final BoardEntityRepository boardEntityRepository;
+    private final ItemEntityRepository itemEntityRepository;
 
     @Transactional
-    // 댓글 생성
-    public CommentResponse createComment(CommentRequest commentRequest, Authentication authentication) throws BaseException {
+    // 댓글 생성(게시글)
+    public CommentResponse createCommentByBoard(CommentRequest commentRequest, Authentication authentication) throws BaseException {
         UserInfoDto userInfoDto = getUserInfoDto(authentication);
 
-        BoardEntity boardEntity = boardEntityRepository.findById(commentRequest.getBoardId()).orElseThrow(() -> new BaseException(ResponseCode.BOARD_NOT_FOUND));
+        BoardEntity boardEntity = boardEntityRepository.findById(commentRequest.getTargetId()).orElseThrow(() -> new BaseException(ResponseCode.BOARD_NOT_FOUND));
 
         CommentEntity commentEntity = CommentEntity.builder()
                 .userId(userInfoDto.getUserId())
-                .boardId(commentRequest.getBoardId())
+                .targetId(commentRequest.getTargetId())
                 .content(commentRequest.getContent())
                 .writer(userInfoDto.getName())
                 .isDeleted(false)
@@ -53,7 +56,39 @@ public class CommentService {
         return CommentResponse.builder()
                 .commentId(commentEntity.getCommentId())
                 .userId(commentEntity.getUserId())
-                .boardId(commentEntity.getBoardId())
+                .targetId(commentEntity.getTargetId())
+                .content(commentEntity.getContent())
+                .writer(commentEntity.getWriter())
+                .createdAt(commentEntity.getCreatedAt())
+                .updatedAt(commentEntity.getUpdatedAt())
+                .build();
+    }
+
+    @Transactional
+    // 댓글 생성(리뷰)
+    public CommentResponse createCommentByItem(CommentRequest commentRequest, Authentication authentication) throws BaseException {
+        UserInfoDto userInfoDto = getUserInfoDto(authentication);
+
+        ItemEntity itemEntity = itemEntityRepository.findById(commentRequest.getTargetId()).orElseThrow(() -> new BaseException(ResponseCode.ITEM_NOT_FOUND));
+
+        CommentEntity commentEntity = CommentEntity.builder()
+                .userId(userInfoDto.getUserId())
+                .targetId(commentRequest.getTargetId())
+                .content(commentRequest.getContent())
+                .writer(userInfoDto.getName())
+                .isDeleted(false)
+                .build();
+
+        List<CommentEntity> comments = itemEntity.getComments();
+        comments.add(commentEntity);
+
+        commentEntityRepository.save(commentEntity);
+        itemEntityRepository.save(itemEntity);
+
+        return CommentResponse.builder()
+                .commentId(commentEntity.getCommentId())
+                .userId(commentEntity.getUserId())
+                .targetId(commentEntity.getTargetId())
                 .content(commentEntity.getContent())
                 .writer(commentEntity.getWriter())
                 .createdAt(commentEntity.getCreatedAt())
@@ -68,7 +103,7 @@ public class CommentService {
 
         CommentEntity updatedCommentEntity = CommentEntity.builder()
                 .commentId(commentEntity.getCommentId())
-                .boardId(commentEntity.getBoardId())
+                .targetId(commentEntity.getTargetId())
                 .userId(commentEntity.getUserId())
                 .content(commentUpdateRequest.getContent())
                 .writer(commentEntity.getWriter())
@@ -82,7 +117,7 @@ public class CommentService {
 
         return CommentResponse.builder()
                 .commentId(saved.getCommentId())
-                .boardId(saved.getBoardId())
+                .targetId(saved.getTargetId())
                 .userId(saved.getUserId())
                 .content(saved.getContent())
                 .writer(saved.getWriter())
@@ -90,7 +125,7 @@ public class CommentService {
                         CommentReplyResponse.builder()
                                 .commentId(reply.getCommentId())
                                 .userId(reply.getUserId())
-                                .boardId(reply.getBoardId())
+                                .targetId(reply.getTargetId())
                                 .content(reply.getContent())
                                 .writer(reply.getWriter())
                                 .createdAt(reply.getCreatedAt())
@@ -105,7 +140,7 @@ public class CommentService {
     // 댓글 삭제
     public void deleteComment(Long commentId) {
         CommentEntity commentEntity = getCommentEntity(commentId);
-        BoardEntity boardEntity = boardEntityRepository.findById(commentEntity.getBoardId()).orElseThrow(() -> new BaseException(ResponseCode.BOARD_NOT_FOUND));
+        BoardEntity boardEntity = boardEntityRepository.findById(commentEntity.getTargetId()).orElseThrow(() -> new BaseException(ResponseCode.BOARD_NOT_FOUND));
 
         commentEntity.deleteSetting();
 
@@ -124,7 +159,7 @@ public class CommentService {
 
         CommentEntity commentEntity = CommentEntity.builder()
                 .userId(userInfoDto.getUserId())
-                .boardId(commentRequest.getBoardId())
+                .targetId(commentRequest.getTargetId())
                 .content(commentRequest.getContent())
                 .writer(userInfoDto.getName())
                 .isDeleted(false)
@@ -138,7 +173,7 @@ public class CommentService {
         return CommentReplyResponse.builder()
                 .commentId(saved.getCommentId())
                 .userId(saved.getUserId())
-                .boardId(saved.getBoardId())
+                .targetId(saved.getTargetId())
                 .content(saved.getContent())
                 .writer(saved.getWriter())
                 .createdAt(saved.getCreatedAt())
