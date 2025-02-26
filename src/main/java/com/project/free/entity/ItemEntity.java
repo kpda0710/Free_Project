@@ -42,6 +42,14 @@ public class ItemEntity extends BaseEntity {
 
     @ToString.Exclude
     @OneToMany
+    private List<LikesEntity> likes = new ArrayList<>();
+
+    @ToString.Exclude
+    @OneToMany
+    private List<CommentEntity> comments = new ArrayList<>();
+
+    @ToString.Exclude
+    @OneToMany
     private List<PhotoEntity> photos = new ArrayList<>();
 
     public void updateItemName(String itemName) {

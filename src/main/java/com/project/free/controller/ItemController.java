@@ -1,8 +1,7 @@
 package com.project.free.controller;
 
-import com.project.free.dto.item.ItemDetailResponse;
-import com.project.free.dto.item.ItemRequest;
 import com.project.free.dto.item.ItemResponse;
+import com.project.free.dto.item.ItemRequest;
 import com.project.free.dto.item.ItemUpdateRequest;
 import com.project.free.entity.ItemCategory;
 import com.project.free.exception.ResponseCode;
@@ -12,9 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/items")
@@ -30,26 +26,26 @@ public class ItemController {
     }
 
     @GetMapping("{itemId}")
-    public CustomResponse<ItemDetailResponse> getItemById(@PathVariable(name = "itemId") Long itemId, Authentication authentication) {
-        ItemDetailResponse itemDetailResponse = itemService.getItemById(itemId, authentication);
-        return CustomResponse.success(ResponseCode.SUCCESS, itemDetailResponse);
+    public CustomResponse<ItemResponse> getItemById(@PathVariable(name = "itemId") Long itemId, Authentication authentication) {
+        ItemResponse itemResponse = itemService.getItemById(itemId, authentication);
+        return CustomResponse.success(ResponseCode.SUCCESS, itemResponse);
     }
 
     @GetMapping("/title")
-    public CustomResponse<PageImpl<ItemDetailResponse>> getItemByItemName(@RequestParam("itemName") String itemName, @RequestParam(name = "page", defaultValue = "0") int page, Authentication authentication) {
-        PageImpl<ItemDetailResponse> itemDetailResponse = itemService.getItemByItemName(itemName, page, authentication);
+    public CustomResponse<PageImpl<ItemResponse>> getItemByItemName(@RequestParam("itemName") String itemName, @RequestParam(name = "page", defaultValue = "0") int page, Authentication authentication) {
+        PageImpl<ItemResponse> itemDetailResponse = itemService.getItemByItemName(itemName, page, authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, itemDetailResponse);
     }
 
     @GetMapping("/category")
-    public CustomResponse<PageImpl<ItemDetailResponse>> getItemByCategory(@RequestParam("category") ItemCategory category, @RequestParam(name = "page", defaultValue = "0") int page, Authentication authentication) {
-        PageImpl<ItemDetailResponse> itemDetailResponse = itemService.getItemByCategory(category, page, authentication);
+    public CustomResponse<PageImpl<ItemResponse>> getItemByCategory(@RequestParam("category") ItemCategory category, @RequestParam(name = "page", defaultValue = "0") int page, Authentication authentication) {
+        PageImpl<ItemResponse> itemDetailResponse = itemService.getItemByCategory(category, page, authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, itemDetailResponse);
     }
 
     @GetMapping()
-    public CustomResponse<PageImpl<ItemDetailResponse>> getItemAll(@RequestParam(name = "page", defaultValue = "0") int page, Authentication authentication) {
-        PageImpl<ItemDetailResponse> itemDetailResponseList = itemService.getItemAll(page, authentication);
+    public CustomResponse<PageImpl<ItemResponse>> getItemAll(@RequestParam(name = "page", defaultValue = "0") int page, Authentication authentication) {
+        PageImpl<ItemResponse> itemDetailResponseList = itemService.getItemAll(page, authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, itemDetailResponseList);
     }
 

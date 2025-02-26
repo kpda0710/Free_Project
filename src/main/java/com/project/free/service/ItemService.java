@@ -1,9 +1,8 @@
 package com.project.free.service;
 
 import com.project.free.dto.image.PhotoResponse;
-import com.project.free.dto.item.ItemDetailResponse;
-import com.project.free.dto.item.ItemRequest;
 import com.project.free.dto.item.ItemResponse;
+import com.project.free.dto.item.ItemRequest;
 import com.project.free.dto.item.ItemUpdateRequest;
 import com.project.free.dto.user.CustomUserDetails;
 import com.project.free.dto.user.UserInfoDto;
@@ -60,10 +59,10 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     // 상품 ID로 조회
-    public ItemDetailResponse getItemById(Long itemId, Authentication authentication) {
+    public ItemResponse getItemById(Long itemId, Authentication authentication) {
         ItemEntity itemEntity = itemEntityRepository.findById(itemId).orElseThrow(() -> new BaseException(ResponseCode.ITEM_NOT_FOUND));
 
-        return ItemDetailResponse.builder()
+        return ItemResponse.builder()
                 .itemId(itemEntity.getItemId())
                 .sellerId(itemEntity.getSellerId())
                 .itemName(itemEntity.getItemName())
@@ -84,14 +83,14 @@ public class ItemService {
 
     @Transactional(readOnly = true)
     // 상품 이름으로 상품 조회
-    public PageImpl<ItemDetailResponse> getItemByItemName(String itemName, int pageNumber, Authentication authentication) {
+    public PageImpl<ItemResponse> getItemByItemName(String itemName, int pageNumber, Authentication authentication) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.asc("createdAt"));
         Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(sorts));
         Page<ItemEntity> itemEntityList = itemEntityRepository.findByItemNameContaining(itemName, pageable);
 
-        List<ItemDetailResponse> itemDetailResponseList = itemEntityList.stream().map(itemEntity ->
-                ItemDetailResponse.builder()
+        List<ItemResponse> itemResponseList = itemEntityList.stream().map(itemEntity ->
+                ItemResponse.builder()
                         .itemId(itemEntity.getItemId())
                         .sellerId(itemEntity.getSellerId())
                         .itemName(itemEntity.getItemName())
@@ -109,18 +108,18 @@ public class ItemService {
                         .updatedAt(itemEntity.getUpdatedAt())
                         .build()).collect(Collectors.toList());
 
-        return new PageImpl<>(itemDetailResponseList, pageable, itemEntityList.getTotalElements());
+        return new PageImpl<>(itemResponseList, pageable, itemEntityList.getTotalElements());
     }
 
     @Transactional(readOnly = true)
-    public PageImpl<ItemDetailResponse> getItemByCategory(ItemCategory itemCategory, int pageNumber, Authentication authentication) {
+    public PageImpl<ItemResponse> getItemByCategory(ItemCategory itemCategory, int pageNumber, Authentication authentication) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.asc("createdAt"));
         Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(sorts));
         Page<ItemEntity> itemEntityList = itemEntityRepository.findByItemCategory(itemCategory, pageable);
 
-        List<ItemDetailResponse> itemDetailResponseList = itemEntityList.stream().map(itemEntity ->
-                ItemDetailResponse.builder()
+        List<ItemResponse> itemResponseList = itemEntityList.stream().map(itemEntity ->
+                ItemResponse.builder()
                         .itemId(itemEntity.getItemId())
                         .sellerId(itemEntity.getSellerId())
                         .itemName(itemEntity.getItemName())
@@ -138,19 +137,19 @@ public class ItemService {
                         .updatedAt(itemEntity.getUpdatedAt())
                         .build()).collect(Collectors.toList());
 
-        return new PageImpl<>(itemDetailResponseList, pageable, itemEntityList.getTotalElements());
+        return new PageImpl<>(itemResponseList, pageable, itemEntityList.getTotalElements());
     }
 
     @Transactional(readOnly = true)
     // 상품 전체 조회
-    public PageImpl<ItemDetailResponse> getItemAll(int pageNumber, Authentication authentication) {
+    public PageImpl<ItemResponse> getItemAll(int pageNumber, Authentication authentication) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.asc("createdAt"));
         Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(sorts));
         Page<ItemEntity> itemEntityList = itemEntityRepository.findAll(pageable);
 
-        List<ItemDetailResponse> itemDetailResponseList = itemEntityList.stream().map(itemEntity ->
-                ItemDetailResponse.builder()
+        List<ItemResponse> itemResponseList = itemEntityList.stream().map(itemEntity ->
+                ItemResponse.builder()
                         .itemId(itemEntity.getItemId())
                         .sellerId(itemEntity.getSellerId())
                         .itemName(itemEntity.getItemName())
@@ -168,7 +167,7 @@ public class ItemService {
                         .updatedAt(itemEntity.getUpdatedAt())
                         .build()).collect(Collectors.toList());
 
-        return new PageImpl<>(itemDetailResponseList, pageable, itemEntityList.getTotalElements());
+        return new PageImpl<>(itemResponseList, pageable, itemEntityList.getTotalElements());
     }
 
     @Transactional
