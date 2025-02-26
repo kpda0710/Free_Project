@@ -137,11 +137,13 @@ public class CommentService {
     }
 
     @Transactional
-    // 댓글 삭제
+    // 댓글 삭제(게시글)
     public void deleteCommentBoard(Long commentId) {
         CommentEntity commentEntity = getCommentEntity(commentId);
         BoardEntity boardEntity = boardEntityRepository.findById(commentEntity.getTargetId()).orElseThrow(() -> new BaseException(ResponseCode.BOARD_NOT_FOUND));
+        List<CommentEntity> replyList = commentEntity.getReply();
 
+        replyList.forEach(reply -> reply.deleteSetting());
         commentEntity.deleteSetting();
 
         List<CommentEntity> boardEntityComments = boardEntity.getComments();
@@ -152,11 +154,13 @@ public class CommentService {
     }
 
     @Transactional
-    // 댓글 삭제
+    // 댓글 삭제(상품)
     public void deleteCommentItem(Long commentId) {
         CommentEntity commentEntity = getCommentEntity(commentId);
         ItemEntity itemEntity = itemEntityRepository.findById(commentEntity.getTargetId()).orElseThrow(() -> new BaseException(ResponseCode.ITEM_NOT_FOUND));
+        List<CommentEntity> replyList = commentEntity.getReply();
 
+        replyList.forEach(reply -> reply.deleteSetting());
         commentEntity.deleteSetting();
 
         List<CommentEntity> comments = itemEntity.getComments();
