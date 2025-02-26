@@ -25,4 +25,8 @@ public class LikesEntity extends BaseEntity {
 
     @Column(nullable = false, updatable = false)
     private Long userId;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private LikesStatus status;
 }

@@ -1,5 +1,6 @@
 package com.project.free.dto.like;
 
+import com.project.free.entity.LikesStatus;
 import lombok.*;
 
 @Getter
@@ -15,4 +16,6 @@ public class LikesResponse {
     private Long targetId;
 
     private Long userId;
+
+    private LikesStatus status;
 }
