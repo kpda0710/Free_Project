@@ -34,9 +34,15 @@ public class ItemController {
         return CustomResponse.success(ResponseCode.SUCCESS, itemDetailResponse);
     }
 
-    @GetMapping()
+    @GetMapping("/title")
     public CustomResponse<PageImpl<ItemDetailResponse>> getItemByItemName(@RequestParam("itemName") String itemName, @RequestParam(name = "page", defaultValue = "0") int page, Authentication authentication) {
         PageImpl<ItemDetailResponse> itemDetailResponseList = itemService.getItemByItemName(itemName, page, authentication);
+        return CustomResponse.success(ResponseCode.SUCCESS, itemDetailResponseList);
+    }
+
+    @GetMapping()
+    public CustomResponse<PageImpl<ItemDetailResponse>> getItemAll(@RequestParam(name = "page", defaultValue = "0") int page, Authentication authentication) {
+        PageImpl<ItemDetailResponse> itemDetailResponseList = itemService.getItemAll(page, authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, itemDetailResponseList);
     }
 
