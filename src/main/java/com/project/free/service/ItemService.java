@@ -113,6 +113,36 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
+    public PageImpl<ItemDetailResponse> getItemByCategory(ItemCategory itemCategory, int pageNumber, Authentication authentication) {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.asc("createdAt"));
+        Pageable pageable = PageRequest.of(pageNumber, 10, Sort.by(sorts));
+        Page<ItemEntity> itemEntityList = itemEntityRepository.findByItemCategory(itemCategory, pageable);
+
+        List<ItemDetailResponse> itemDetailResponseList = itemEntityList.stream().map(itemEntity ->
+                ItemDetailResponse.builder()
+                        .itemId(itemEntity.getItemId())
+                        .sellerId(itemEntity.getSellerId())
+                        .itemName(itemEntity.getItemName())
+                        .itemPrice(itemEntity.getItemPrice())
+                        .itemDescription(itemEntity.getItemDescription())
+                        .itemCategory(itemEntity.getItemCategory())
+                        .photos(itemEntity.getPhotos().stream().map(photoEntity ->
+                                PhotoResponse.builder()
+                                        .photoId(photoEntity.getPhotoId())
+                                        .targetId(photoEntity.getTargetId())
+                                        .photoPath(photoEntity.getPhotoPath())
+                                        .photoStatus(photoEntity.getPhotoStatus())
+                                        .build()).collect(Collectors.toList()))
+                        .createdAt(itemEntity.getCreatedAt())
+                        .updatedAt(itemEntity.getUpdatedAt())
+                        .build()).collect(Collectors.toList());
+
+        return new PageImpl<>(itemDetailResponseList, pageable, itemEntityList.getTotalElements());
+    }
+
+    @Transactional(readOnly = true)
+    // 상품 전체 조회
     public PageImpl<ItemDetailResponse> getItemAll(int pageNumber, Authentication authentication) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.asc("createdAt"));
