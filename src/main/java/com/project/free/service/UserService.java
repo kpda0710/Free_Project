@@ -6,6 +6,8 @@ import com.project.free.entity.UserEntity;
 import com.project.free.entity.UserStatus;
 import com.project.free.exception.BaseException;
 import com.project.free.exception.ResponseCode;
+import com.project.free.repository.BoardEntityRepository;
+import com.project.free.repository.SellerEntityRepository;
 import com.project.free.repository.UserEntityRepository;
 import com.project.free.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +32,10 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final BoardService boardService;
+    private final BoardEntityRepository boardEntityRepository;
     private final CommentService commentService;
     private final SellerService sellerService;
+    private final SellerEntityRepository sellerEntityRepository;
 
     // 유저 가입
     @Transactional
@@ -144,6 +148,13 @@ public class UserService {
 
         UserEntity userEntity = getUserEntity(principal.getUserInfoDto().getUserId());
 
+        List<BoardEntity> boardEntityList = boardEntityRepository.findByUserId(userEntity.getUserId());
+        if (!boardEntityList.isEmpty()) {
+            for (BoardEntity boardEntity : boardEntityList) {
+                boardService.deleteBoard(boardEntity.getBoardId(), authentication);
+            }
+        }
+        sellerService.deleteSeller(authentication);
         userEntity.deleteSetting();
         userEntityRepository.save(userEntity);
     }
