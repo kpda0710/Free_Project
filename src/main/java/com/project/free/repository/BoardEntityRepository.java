@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -14,4 +15,5 @@ public interface BoardEntityRepository extends JpaRepository<BoardEntity, Long> 
 
     List<BoardEntity> findByUserId(Long userId);
     Page<BoardEntity> findAllByTitleContaining(String title, Pageable pageable);
+    List<BoardEntity> findByIsDeletedAndDeletedAtBefore(Boolean isDeleted, LocalDateTime deletedAt);
 }
