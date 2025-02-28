@@ -1,5 +1,6 @@
 package com.project.free.service;
 
+import com.project.free.dto.shopping.ShoppingResponse;
 import com.project.free.dto.user.*;
 import com.project.free.entity.BoardEntity;
 import com.project.free.entity.UserEntity;
@@ -96,6 +97,7 @@ public class UserService {
                 .password(userEntity.getPassword())
                 .email(userEntity.getEmail())
                 .status(userEntity.getStatus())
+                .shoppingId(userEntity.getShoppingId())
                 .createdAt(userEntity.getCreatedAt())
                 .updatedAt(userEntity.getUpdatedAt())
                 .build();
@@ -114,6 +116,7 @@ public class UserService {
                 .password(request.getPassword())
                 .email(request.getEmail())
                 .status(userEntity.getStatus())
+                .shoppingId(userEntity.getShoppingId())
                 .createdAt(userEntity.getCreatedAt())
                 .updatedAt(LocalDateTime.now())
                 .isDeleted(userEntity.getIsDeleted())
@@ -136,6 +139,7 @@ public class UserService {
                 .password(saved.getPassword())
                 .email(saved.getEmail())
                 .status(saved.getStatus())
+                .shoppingId(saved.getShoppingId())
                 .createdAt(saved.getCreatedAt())
                 .updatedAt(saved.getUpdatedAt())
                 .build();
@@ -174,6 +178,7 @@ public class UserService {
                         .password(userEntity.getPassword())
                         .email(userEntity.getEmail())
                         .status(userEntity.getStatus())
+                        .shoppingId(userEntity.getShoppingId())
                         .createdAt(userEntity.getCreatedAt())
                         .updatedAt(userEntity.getUpdatedAt())
                         .build()).collect(Collectors.toList());

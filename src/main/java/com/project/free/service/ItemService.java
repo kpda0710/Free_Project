@@ -15,6 +15,7 @@ import com.project.free.exception.BaseException;
 import com.project.free.exception.ResponseCode;
 import com.project.free.repository.ItemEntityRepository;
 import com.project.free.repository.SellerEntityRepository;
+import com.project.free.repository.ShoppingEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.security.core.Authentication;
@@ -31,6 +32,7 @@ public class ItemService {
 
     private final ItemEntityRepository itemEntityRepository;
     private final SellerEntityRepository sellerEntityRepository;
+    private final ShoppingEntityRepository shoppingEntityRepository;
 
     @Transactional
     // 쇼핑몰에 상품 등록
@@ -43,7 +45,9 @@ public class ItemService {
                 .itemName(itemRequest.getItemName())
                 .itemPrice(itemRequest.getItemPrice())
                 .itemDescription(itemRequest.getItemDescription())
+                .quantity(itemRequest.getQuantity())
                 .itemCategory(itemRequest.getItemCategory())
+                .status(ItemStatus.WAITING)
                 .isDeleted(false)
                 .build();
 
@@ -55,7 +59,9 @@ public class ItemService {
                 .itemName(saved.getItemName())
                 .itemPrice(saved.getItemPrice())
                 .itemDescription(saved.getItemDescription())
+                .quantity(saved.getQuantity())
                 .itemCategory(saved.getItemCategory())
+                .status(saved.getStatus())
                 .createdAt(saved.getCreatedAt())
                 .updatedAt(saved.getUpdatedAt())
                 .build();
@@ -72,7 +78,9 @@ public class ItemService {
                 .itemName(itemEntity.getItemName())
                 .itemPrice(itemEntity.getItemPrice())
                 .itemDescription(itemEntity.getItemDescription())
+                .quantity(itemEntity.getQuantity())
                 .itemCategory(itemEntity.getItemCategory())
+                .status(itemEntity.getStatus())
                 .likes(itemEntity.getLikes().stream().map(likesEntity ->
                         LikesResponse.builder()
                                 .likesId(likesEntity.getLikesId())
@@ -126,7 +134,9 @@ public class ItemService {
                         .itemName(itemEntity.getItemName())
                         .itemPrice(itemEntity.getItemPrice())
                         .itemDescription(itemEntity.getItemDescription())
+                        .quantity(itemEntity.getQuantity())
                         .itemCategory(itemEntity.getItemCategory())
+                        .status(itemEntity.getStatus())
                         .photos(itemEntity.getPhotos().stream().map(photoEntity ->
                                 PhotoResponse.builder()
                                         .photoId(photoEntity.getPhotoId())
@@ -156,7 +166,9 @@ public class ItemService {
                         .itemName(itemEntity.getItemName())
                         .itemPrice(itemEntity.getItemPrice())
                         .itemDescription(itemEntity.getItemDescription())
+                        .quantity(itemEntity.getQuantity())
                         .itemCategory(itemEntity.getItemCategory())
+                        .status(itemEntity.getStatus())
                         .photos(itemEntity.getPhotos().stream().map(photoEntity ->
                                 PhotoResponse.builder()
                                         .photoId(photoEntity.getPhotoId())
@@ -186,7 +198,9 @@ public class ItemService {
                         .itemName(itemEntity.getItemName())
                         .itemPrice(itemEntity.getItemPrice())
                         .itemDescription(itemEntity.getItemDescription())
+                        .quantity(itemEntity.getQuantity())
                         .itemCategory(itemEntity.getItemCategory())
+                        .status(itemEntity.getStatus())
                         .photos(itemEntity.getPhotos().stream().map(photoEntity ->
                                 PhotoResponse.builder()
                                         .photoId(photoEntity.getPhotoId())
@@ -218,12 +232,15 @@ public class ItemService {
                 .itemName(itemEntity.getItemName())
                 .itemPrice(itemEntity.getItemPrice())
                 .itemDescription(itemEntity.getItemDescription())
+                .quantity(itemEntity.getQuantity())
                 .itemCategory(itemEntity.getItemCategory())
+                .status(itemEntity.getStatus())
                 .createdAt(itemEntity.getCreatedAt())
                 .updatedAt(itemEntity.getUpdatedAt())
                 .build();
     }
 
+    // 상품 삭제
     @Transactional
     public void deleteItem(Long itemId, Authentication authentication) {
         ItemEntity itemEntity = itemEntityRepository.findById(itemId).orElseThrow(() -> new BaseException(ResponseCode.ITEM_NOT_FOUND));
@@ -235,6 +252,34 @@ public class ItemService {
         });
         itemEntity.getPhotos().forEach(photo -> photo.deleteSetting());
         itemEntity.deleteSetting();
+    }
+
+    @Transactional(readOnly = true)
+    public void buyItem(Long itemId, Authentication authentication) {
+        UserInfoDto userInfoDto = getUserInfoDto(authentication);
+        ItemEntity itemEntity = itemEntityRepository.findByItemIdAndStatus(itemId, ItemStatus.SOLD).orElseThrow(() -> new BaseException(ResponseCode.ITEM_NOT_FOUND));
+
+        ShoppingEntity shoppingEntity = shoppingEntityRepository.findByUserId(userInfoDto.getUserId()).orElseThrow(() -> new BaseException(ResponseCode.USER_NOT_FOUND));
+        if (shoppingEntity.getMoney() >= itemEntity.getItemPrice() && itemEntity.getQuantity() > 0) {
+            shoppingEntity.minusMoney(itemEntity.getItemPrice());
+            shoppingEntity.plusTotalUsedMoney(itemEntity.getItemPrice());
+            shoppingEntity.plusPoint(itemEntity.getItemPrice() * (shoppingEntity.getStatus().getPointRate() / 100));
+            updateStatus(shoppingEntity);
+        } else {
+            throw new BaseException(ResponseCode.ITEM_BUY_FAIL);
+        }
+    }
+
+    private void updateStatus(ShoppingEntity shoppingEntity) {
+        if (shoppingEntity.getTotalUsedMoney() >= ShoppingStatus.VIP.getGradeMax()) {
+            shoppingEntity.updateStatus(ShoppingStatus.VIP);
+        } else if (shoppingEntity.getTotalUsedMoney() >= ShoppingStatus.DIAMOND.getGradeMax()) {
+            shoppingEntity.updateStatus(ShoppingStatus.DIAMOND);
+        } else if (shoppingEntity.getTotalUsedMoney() >= ShoppingStatus.GOLD.getGradeMax()) {
+            shoppingEntity.updateStatus(ShoppingStatus.GOLD);
+        } else if (shoppingEntity.getTotalUsedMoney() >= ShoppingStatus.SILVER.getGradeMax()) {
+            shoppingEntity.updateStatus(ShoppingStatus.SILVER);
+        }
     }
 
     // 인증 정보로 유저 데이터 가져오기

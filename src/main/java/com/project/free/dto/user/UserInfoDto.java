@@ -1,5 +1,6 @@
 package com.project.free.dto.user;
 
+import com.project.free.entity.ShoppingEntity;
 import com.project.free.entity.UserStatus;
 import lombok.*;
 
@@ -20,4 +21,6 @@ public class UserInfoDto {
     private String password;
 
     private UserStatus status;
+
+    private ShoppingEntity shopping;
 }

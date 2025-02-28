@@ -61,4 +61,10 @@ public class ItemController {
         itemService.deleteItem(itemId, authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, null);
     }
+
+    @GetMapping("/buy/{itemId}")
+    public CustomResponse<Void> buyItem(@PathVariable(name = "itemId") Long itemId, Authentication authentication) {
+        itemService.buyItem(itemId, authentication);
+        return CustomResponse.success(ResponseCode.SUCCESS, null);
+    }
 }

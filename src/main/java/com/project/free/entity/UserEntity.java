@@ -32,4 +32,6 @@ public class UserEntity extends BaseEntity {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserStatus status;
+
+    private Long shoppingId;
 }

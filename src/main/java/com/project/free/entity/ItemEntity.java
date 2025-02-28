@@ -31,14 +31,20 @@ public class ItemEntity extends BaseEntity {
     private String itemName;
 
     @Column(nullable = false)
-    private BigDecimal itemPrice;
+    private Long itemPrice;
 
     @Column(nullable = false)
     private String itemDescription;
 
     @Column(nullable = false)
+    private Long quantity;
+
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ItemCategory itemCategory;
+
+    @Enumerated(EnumType.STRING)
+    private ItemStatus status;
 
     @ToString.Exclude
     @OneToMany
@@ -59,7 +65,7 @@ public class ItemEntity extends BaseEntity {
         }
     }
 
-    public void updatePrice(BigDecimal price) {
+    public void updatePrice(Long price) {
         if (this.itemPrice != null) {
             this.itemPrice = price;
             this.updateSetting();

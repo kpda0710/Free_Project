@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.math.BigDecimal;
 
 @Getter
 @Builder
@@ -18,10 +17,13 @@ public class ItemRequest {
     private String itemName;
 
     @NotNull
-    private BigDecimal itemPrice;
+    private Long itemPrice;
 
     @NotBlank
     private String itemDescription;
+
+    @NotNull
+    private Long quantity;
 
     @NotNull
     private ItemCategory itemCategory;
