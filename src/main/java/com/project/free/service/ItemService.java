@@ -224,6 +224,19 @@ public class ItemService {
                 .build();
     }
 
+    @Transactional
+    public void deleteItem(Long itemId, Authentication authentication) {
+        ItemEntity itemEntity = itemEntityRepository.findById(itemId).orElseThrow(() -> new BaseException(ResponseCode.ITEM_NOT_FOUND));
+
+        itemEntity.getLikes().forEach(like -> like.deleteSetting());
+        itemEntity.getComments().forEach(comment -> {
+            comment.deleteSetting();
+            comment.getReply().forEach(reply -> reply.deleteSetting());
+        });
+        itemEntity.getPhotos().forEach(photo -> photo.deleteSetting());
+        itemEntity.deleteSetting();
+    }
+
     // 인증 정보로 유저 데이터 가져오기
     private static UserInfoDto getUserInfoDto(Authentication authentication) {
         CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();

@@ -55,4 +55,10 @@ public class ItemController {
         ItemResponse itemResponse = itemService.updateItem(itemId, itemUpdateRequest, authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, itemResponse);
     }
+
+    @DeleteMapping("{itemId}")
+    public CustomResponse<Void> deleteItem(@PathVariable(name = "itemId") Long itemId, Authentication authentication) {
+        itemService.deleteItem(itemId, authentication);
+        return CustomResponse.success(ResponseCode.SUCCESS, null);
+    }
 }
