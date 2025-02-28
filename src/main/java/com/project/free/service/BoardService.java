@@ -210,9 +210,14 @@ public class BoardService {
             throw new BaseException(ResponseCode.BOARD_USERID_NOT_MATCH);
         }
 
-        boardEntity.deleteSetting();
+        boardEntity.getComments().forEach(comment -> {
+            comment.deleteSetting();
+            comment.getReply().forEach(reply -> reply.deleteSetting());
+        });
+        boardEntity.getLikes().forEach(like -> like.deleteSetting());
+        boardEntity.getPhotos().forEach(photo -> photo.deleteSetting());
 
-        boardEntityRepository.save(boardEntity);
+        boardEntity.deleteSetting();
     }
 
     @Transactional
@@ -220,7 +225,6 @@ public class BoardService {
     public void deleteBoardById(Long boardId, Authentication authentication) {
         BoardEntity boardEntity = getBoardEntityByID(boardId);
         boardEntity.deleteSetting();
-        boardEntityRepository.save(boardEntity);
     }
 
     // BoardEntity 가져오기
