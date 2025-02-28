@@ -12,6 +12,7 @@ import java.util.List;
 @Repository
 public interface ItemEntityRepository extends JpaRepository<ItemEntity, Long> {
 
+    List<ItemEntity> findBySellerId(Long sellerId);
     Page<ItemEntity> findByItemNameContaining(String itemName, Pageable pageable);
     Page<ItemEntity> findByItemCategory(ItemCategory category, Pageable pageable);
 }
