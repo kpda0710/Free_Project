@@ -37,4 +37,10 @@ public class SellerController {
         SellerResponse sellerResponse = sellerService.getSeller(authentication);
         return CustomResponse.success(ResponseCode.SUCCESS, sellerResponse);
     }
+
+    @DeleteMapping()
+    public CustomResponse<Void> deleteSeller(Authentication authentication) {
+        sellerService.deleteSeller(authentication);
+        return CustomResponse.success(ResponseCode.SUCCESS, null);
+    }
 }

@@ -6,20 +6,26 @@ import com.project.free.dto.seller.SellerUpdateRequest;
 import com.project.free.dto.user.CustomUserDetails;
 import com.project.free.dto.user.UserInfoDto;
 import com.project.free.dto.user.UserRequest;
+import com.project.free.entity.ItemEntity;
 import com.project.free.entity.SellerEntity;
 import com.project.free.exception.BaseException;
 import com.project.free.exception.ResponseCode;
+import com.project.free.repository.ItemEntityRepository;
 import com.project.free.repository.SellerEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class SellerService {
 
     private final SellerEntityRepository sellerEntityRepository;
+    private final ItemEntityRepository itemEntityRepository;
+    private final ItemService itemService;
 
     @Transactional
     // 유저 정보로 판매자 등록하기
@@ -85,6 +91,21 @@ public class SellerService {
                 .createdAt(sellerEntity.getCreatedAt())
                 .updatedAt(sellerEntity.getUpdatedAt())
                 .build();
+    }
+
+    @Transactional
+    // 판매자 정보 삭제
+    public void deleteSeller(Authentication authentication) {
+        UserInfoDto userInfoDto = getUserInfoDto(authentication);
+        SellerEntity sellerEntity = getSellerEntity(userInfoDto);
+
+        List<ItemEntity> itemEntityList = itemEntityRepository.findBySellerId(sellerEntity.getSellerId());
+        if (!itemEntityList.isEmpty()) {
+            for (ItemEntity itemEntity : itemEntityList) {
+                itemService.deleteItem(itemEntity.getItemId(), authentication);
+            }
+        }
+        sellerEntity.deleteSetting();
     }
 
     @Transactional
